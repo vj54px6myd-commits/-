@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет сотрудника - Soda-Chlorate</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-flask"></i>
+                    <h1>Soda-Chlorate</h1>
+                </div>
+                <div class="user-info">
+                    <span class="user-name">Иван Петров</span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <ul class="nav-list">
+                <li class="nav-item active" data-section="schedule">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Расписание</span>
+                </li>
+                <li class="nav-item" data-section="salary">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Зарплата</span>
+                </li>
+                <li class="nav-item" data-section="news">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Новости</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Schedule Section -->
+            <section id="schedule" class="content-section active">
+                <div class="section-header">
+                    <h2>Мое расписание</h2>
+                    <div class="date-selector">
+                        <button class="btn btn-secondary" id="prevWeek">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="currentWeek">Неделя 15-21 января 2024</span>
+                        <button class="btn btn-secondary" id="nextWeek">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="schedule-grid">
+                    <div class="schedule-day">
+                        <h3>Понедельник</h3>
+                        <div class="shift-info">
+                            <span class="shift-time">08:00 - 17:00</span>
+                            <span class="shift-type">Дневная смена</span>
+                        </div>
+                    </div>
+                    <div class="schedule-day">
+                        <h3>Вторник</h3>
+                        <div class="shift-info">
+                            <span class="shift-time">08:00 - 17:00</span>
+                            <span class="shift-type">Дневная смена</span>
+                        </div>
+                    </div>
+                    <div class="schedule-day">
+                        <h3>Среда</h3>
+                        <div class="shift-info">
+                            <span class="shift-time">08:00 - 17:00</span>
+                            <span class="shift-type">Дневная смена</span>
+                        </div>
+                    </div>
+                    <div class="schedule-day">
+                        <h3>Четверг</h3>
+                        <div class="shift-info">
+                            <span class="shift-time">08:00 - 17:00</span>
+                            <span class="shift-type">Дневная смена</span>
+                        </div>
+                    </div>
+                    <div class="schedule-day">
+                        <h3>Пятница</h3>
+                        <div class="shift-info">
+                            <span class="shift-time">08:00 - 17:00</span>
+                            <span class="shift-type">Дневная смена</span>
+                        </div>
+                    </div>
+                    <div class="schedule-day weekend">
+                        <h3>Суббота</h3>
+                        <div class="shift-info">
+                            <span class="shift-time">Выходной</span>
+                        </div>
+                    </div>
+                    <div class="schedule-day weekend">
+                        <h3>Воскресенье</h3>
+                        <div class="shift-info">
+                            <span class="shift-time">Выходной</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Salary Section -->
+            <section id="salary" class="content-section">
+                <div class="section-header">
+                    <h2>Информация о зарплате</h2>
+                </div>
+                
+                <div class="salary-overview">
+                    <div class="salary-card">
+                        <h3>Текущая зарплата</h3>
+                        <div class="salary-amount">75,000 ₽</div>
+                        <p class="salary-period">за январь 2024</p>
+                    </div>
+                    <div class="salary-card">
+                        <h3>Отработано часов</h3>
+                        <div class="hours-amount">160 ч</div>
+                        <p class="hours-period">из 160 запланированных</p>
+                    </div>
+                </div>
+
+                <div class="salary-details">
+                    <h3>Детализация зарплаты</h3>
+                    <div class="salary-breakdown">
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Оклад</span>
+                            <span class="breakdown-value">60,000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Премия</span>
+                            <span class="breakdown-value">10,000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Доплата за переработку</span>
+                            <span class="breakdown-value">5,000 ₽</span>
+                        </div>
+                        <div class="breakdown-item total">
+                            <span class="breakdown-label">Итого</span>
+                            <span class="breakdown-value">75,000 ₽</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="salary-history">
+                    <h3>История выплат</h3>
+                    <div class="history-table">
+                        <div class="history-header">
+                            <span>Период</span>
+                            <span>Сумма</span>
+                            <span>Статус</span>
+                        </div>
+                        <div class="history-row">
+                            <span>Декабрь 2023</span>
+                            <span>75,000 ₽</span>
+                            <span class="status paid">Выплачено</span>
+                        </div>
+                        <div class="history-row">
+                            <span>Ноябрь 2023</span>
+                            <span>72,000 ₽</span>
+                            <span class="status paid">Выплачено</span>
+                        </div>
+                        <div class="history-row">
+                            <span>Октябрь 2023</span>
+                            <span>75,000 ₽</span>
+                            <span class="status paid">Выплачено</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- News Section -->
+            <section id="news" class="content-section">
+                <div class="section-header">
+                    <h2>Новости компании</h2>
+                </div>
+                
+                <div class="news-list">
+                    <article class="news-item">
+                        <div class="news-date">20 января 2024</div>
+                        <h3 class="news-title">Обновление системы безопасности на производстве</h3>
+                        <p class="news-excerpt">Внедрены новые протоколы безопасности для работы с химическими веществами. Все сотрудники должны пройти дополнительное обучение до 1 февраля.</p>
+                        <div class="news-tags">
+                            <span class="tag safety">Безопасность</span>
+                            <span class="tag important">Важно</span>
+                        </div>
+                    </article>
+
+                    <article class="news-item">
+                        <div class="news-date">18 января 2024</div>
+                        <h3 class="news-title">Корпоративное мероприятие в честь Дня химика</h3>
+                        <p class="news-excerpt">Приглашаем всех сотрудников на праздничное мероприятие, которое состоится 25 января в 18:00 в актовом зале главного офиса.</p>
+                        <div class="news-tags">
+                            <span class="tag event">Мероприятие</span>
+                        </div>
+                    </article>
+
+                    <article class="news-item">
+                        <div class="news-date">15 января 2024</div>
+                        <h3 class="news-title">Новые возможности для профессионального развития</h3>
+                        <p class="news-excerpt">Компания запускает программу обучения для повышения квалификации сотрудников. Подать заявку можно до 30 января.</p>
+                        <div class="news-tags">
+                            <span class="tag development">Развитие</span>
+                        </div>
+                    </article>
+
+                    <article class="news-item">
+                        <div class="news-date">12 января 2024</div>
+                        <h3 class="news-title">Результаты производственного совещания</h3>
+                        <p class="news-excerpt">Обсуждены планы по увеличению объемов производства и улучшению качества продукции. Новые стандарты вступают в силу с 1 февраля.</p>
+                        <div class="news-tags">
+                            <span class="tag production">Производство</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

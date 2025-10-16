@@ -1,0 +1,107 @@
+/* Brand Colors */
+:root {
+  --blue-900: #0a2540; /* dark blue */
+  --blue-700: #123c69;
+  --blue-100: #e6eff7;
+  --white: #ffffff;
+  --gray-100: #f5f7fa;
+  --gray-300: #d2d8e1;
+  --gray-500: #8a94a6;
+  --shadow-md: 0 6px 24px rgba(10, 37, 64, 0.14);
+  --radius-md: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--blue-900);
+  background: var(--white);
+}
+.container { width: min(1100px, 92%); margin: 0 auto; }
+
+/* Header */
+.app-header {
+  background: var(--blue-900);
+  color: var(--white);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { width: 40px; height: 40px; }
+.company { font-weight: 700; letter-spacing: 0.2px; }
+.subtitle { font-size: 12px; color: #c7d2e6; }
+
+.main-nav { display: flex; gap: 8px; }
+.nav-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--white);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.06); }
+.nav-btn.is-active { background: var(--white); color: var(--blue-900); }
+
+/* Main */
+.main { padding: 24px 0 56px; }
+.panel { display: grid; gap: 16px; }
+.panel[hidden] { display: none; }
+.panel-title { margin: 0; font-size: 24px; }
+
+/* Schedule */
+.schedule { background: var(--gray-100); padding: 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
+.week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.day-card { background: var(--white); border: 1px solid var(--gray-300); border-radius: 10px; padding: 12px; min-height: 110px; display: flex; flex-direction: column; gap: 8px; }
+.day-card .date { font-weight: 700; color: var(--blue-700); }
+.shift {
+  background: var(--blue-100);
+  border-left: 4px solid var(--blue-700);
+  border-radius: 8px;
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+}
+.shift .name { font-weight: 600; }
+.shift .time { font-variant-numeric: tabular-nums; color: var(--blue-700); }
+
+/* Salary */
+.salary-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.summary-card { background: var(--white); border: 1px solid var(--gray-300); border-radius: 10px; padding: 14px; box-shadow: var(--shadow-md); }
+.summary-card .label { color: var(--gray-500); font-size: 12px; }
+.summary-card .value { font-weight: 700; font-size: 20px; }
+.salary-history { background: var(--gray-100); border-radius: var(--radius-md); padding: 12px; }
+.history-item { background: var(--white); border: 1px solid var(--gray-300); border-radius: 10px; padding: 12px; display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; }
+.history-item + .history-item { margin-top: 8px; }
+.history-item .note { color: var(--gray-500); }
+.history-item .amount { font-weight: 700; }
+
+/* News */
+.news-feed { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.news-card { background: var(--white); border: 1px solid var(--gray-300); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-md); display: grid; grid-template-rows: 160px auto; }
+.news-card img { width: 100%; height: 100%; object-fit: cover; }
+.news-card .content { padding: 12px; display: grid; gap: 6px; }
+.news-card .title { font-weight: 700; }
+.news-card .date { font-size: 12px; color: var(--gray-500); }
+
+/* Footer */
+.app-footer { border-top: 1px solid var(--gray-300); padding: 16px 0; color: var(--gray-500); }
+
+/* Responsive */
+@media (max-width: 960px) {
+  .news-feed { grid-template-columns: repeat(2, 1fr); }
+  .salary-summary { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .week-grid { grid-template-columns: 1fr; }
+  .news-feed { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .main-nav { width: 100%; }
+  .nav-btn { flex: 1; width: 100%; text-align: center; }
+}

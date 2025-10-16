@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет сотрудника - Soda-Chlorate</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-flask"></i>
+                    <h1>Soda-Chlorate</h1>
+                </div>
+                <div class="user-info">
+                    <span class="user-name">Иван Петров</span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <ul class="nav-list">
+                <li class="nav-item active" data-section="schedule">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Расписание</span>
+                </li>
+                <li class="nav-item" data-section="salary">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Зарплата</span>
+                </li>
+                <li class="nav-item" data-section="news">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Новости</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Schedule Section -->
+            <section id="schedule" class="content-section active">
+                <div class="section-header">
+                    <h2>Мое расписание</h2>
+                    <div class="date-selector">
+                        <button class="date-btn" id="prevWeek">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="current-week" id="currentWeek"></span>
+                        <button class="date-btn" id="nextWeek">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="schedule-grid">
+                    <div class="schedule-header">
+                        <div class="time-column">Время</div>
+                        <div class="day-column">Понедельник</div>
+                        <div class="day-column">Вторник</div>
+                        <div class="day-column">Среда</div>
+                        <div class="day-column">Четверг</div>
+                        <div class="day-column">Пятница</div>
+                        <div class="day-column">Суббота</div>
+                    </div>
+                    <div class="schedule-body" id="scheduleBody">
+                        <!-- Schedule will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Salary Section -->
+            <section id="salary" class="content-section">
+                <div class="section-header">
+                    <h2>Информация о зарплате</h2>
+                </div>
+                
+                <div class="salary-cards">
+                    <div class="salary-card">
+                        <div class="card-header">
+                            <i class="fas fa-wallet"></i>
+                            <h3>Текущая зарплата</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="salary-amount">75,000 ₽</div>
+                            <div class="salary-period">за месяц</div>
+                        </div>
+                    </div>
+                    
+                    <div class="salary-card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Премия</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="salary-amount">12,500 ₽</div>
+                            <div class="salary-period">за этот месяц</div>
+                        </div>
+                    </div>
+                    
+                    <div class="salary-card">
+                        <div class="card-header">
+                            <i class="fas fa-calendar-check"></i>
+                            <h3>Следующая выплата</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="salary-amount">87,500 ₽</div>
+                            <div class="salary-period">15 января 2024</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="salary-history">
+                    <h3>История выплат</h3>
+                    <div class="history-table">
+                        <div class="table-header">
+                            <div>Месяц</div>
+                            <div>Оклад</div>
+                            <div>Премия</div>
+                            <div>Итого</div>
+                        </div>
+                        <div class="table-row">
+                            <div>Декабрь 2023</div>
+                            <div>75,000 ₽</div>
+                            <div>10,000 ₽</div>
+                            <div>85,000 ₽</div>
+                        </div>
+                        <div class="table-row">
+                            <div>Ноябрь 2023</div>
+                            <div>75,000 ₽</div>
+                            <div>8,500 ₽</div>
+                            <div>83,500 ₽</div>
+                        </div>
+                        <div class="table-row">
+                            <div>Октябрь 2023</div>
+                            <div>75,000 ₽</div>
+                            <div>7,200 ₽</div>
+                            <div>82,200 ₽</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- News Section -->
+            <section id="news" class="content-section">
+                <div class="section-header">
+                    <h2>Новости компании</h2>
+                </div>
+                
+                <div class="news-container">
+                    <article class="news-item featured">
+                        <div class="news-image">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span class="news-date">20 декабря 2023</span>
+                                <span class="news-category">Важное</span>
+                            </div>
+                            <h3>Запуск нового производственного цеха</h3>
+                            <p>Компания Soda-Chlorate успешно запустила новый цех по производству хлората натрия. Это позволит увеличить объемы производства на 40% и создать 50 новых рабочих мест.</p>
+                            <a href="#" class="read-more">Читать далее</a>
+                        </div>
+                    </article>
+
+                    <article class="news-item">
+                        <div class="news-image">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span class="news-date">15 декабря 2023</span>
+                                <span class="news-category">Достижения</span>
+                            </div>
+                            <h3>Компания получила сертификат ISO 9001</h3>
+                            <p>Наша компания успешно прошла сертификацию по международному стандарту качества ISO 9001, что подтверждает высокое качество нашей продукции.</p>
+                            <a href="#" class="read-more">Читать далее</a>
+                        </div>
+                    </article>
+
+                    <article class="news-item">
+                        <div class="news-image">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span class="news-date">10 декабря 2023</span>
+                                <span class="news-category">События</span>
+                            </div>
+                            <h3>Корпоративное мероприятие "Новый год"</h3>
+                            <p>Приглашаем всех сотрудников на корпоративное мероприятие, посвященное Новому году. Мероприятие состоится 28 декабря в 18:00 в конференц-зале.</p>
+                            <a href="#" class="read-more">Читать далее</a>
+                        </div>
+                    </article>
+
+                    <article class="news-item">
+                        <div class="news-image">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span class="news-date">5 декабря 2023</span>
+                                <span class="news-category">Экология</span>
+                            </div>
+                            <h3>Новая программа экологической безопасности</h3>
+                            <p>Компания запускает новую программу по снижению воздействия на окружающую среду. Планируется сократить выбросы на 25% к концу 2024 года.</p>
+                            <a href="#" class="read-more">Читать далее</a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

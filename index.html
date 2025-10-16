@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сода-Хлорат — Личный кабинет сотрудника</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="app-header" role="banner">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="./assets/logo.svg" class="logo" alt="Логотип Сода-Хлорат" />
+        <div class="brand-text">
+          <div class="company">Сода-Хлорат</div>
+          <div class="subtitle">Личный кабинет сотрудника</div>
+        </div>
+      </div>
+      <nav aria-label="Основная навигация" class="main-nav">
+        <button class="nav-btn is-active" data-tab="schedule" aria-current="page">Расписание</button>
+        <button class="nav-btn" data-tab="salary">Зарплата</button>
+        <button class="nav-btn" data-tab="news">Новости</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main" role="main">
+    <section id="panel-schedule" class="panel is-active" aria-labelledby="tab-schedule">
+      <h1 class="panel-title" id="tab-schedule">Расписание</h1>
+      <div id="schedule-container" class="schedule"></div>
+    </section>
+
+    <section id="panel-salary" class="panel" aria-labelledby="tab-salary" hidden>
+      <h1 class="panel-title" id="tab-salary">Зарплата</h1>
+      <div id="salary-summary" class="salary-summary"></div>
+      <div id="salary-history" class="salary-history"></div>
+    </section>
+
+    <section id="panel-news" class="panel" aria-labelledby="tab-news" hidden>
+      <h1 class="panel-title" id="tab-news">Новости компании</h1>
+      <div id="news-feed" class="news-feed"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer" role="contentinfo">
+    <div class="container">
+      © <span id="year"></span> Сода-Хлорат. Все права защищены.
+    </div>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

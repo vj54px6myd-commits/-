@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отладка регистрации - Сода-Хлорат</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .debug-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        .warning { color: orange; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            background: #1e40af;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Отладка регистрации</h1>
+        <button onclick="checkFunctions()">Проверить функции</button>
+        <button onclick="checkForm()">Проверить форму</button>
+        <button onclick="testRegistration()">Тест регистрации</button>
+        <button onclick="clearLog()">Очистить лог</button>
+    </div>
+    
+    <div class="debug-container">
+        <h2>📋 Лог отладки</h2>
+        <div id="debugLog"></div>
+    </div>
+    
+    <div class="debug-container">
+        <h2>📝 Форма регистрации</h2>
+        <form id="testForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="regFirstName" placeholder="Имя" required>
+                <input type="text" id="regLastName" placeholder="Фамилия" required>
+            </div>
+            <input type="email" id="regEmail" placeholder="Email" required style="width: 100%; margin-bottom: 10px;">
+            <input type="text" id="regPosition" placeholder="Должность" required style="width: 100%; margin-bottom: 10px;">
+            <select id="regDepartment" required style="width: 100%; margin-bottom: 10px;">
+                <option value="">Выберите отдел</option>
+                <option value="production">Производство</option>
+                <option value="laboratory">Лаборатория</option>
+                <option value="quality">Контроль качества</option>
+                <option value="safety">Безопасность</option>
+                <option value="management">Управление</option>
+            </select>
+            <select id="regShift" required style="width: 100%; margin-bottom: 10px;">
+                <option value="">Выберите смену</option>
+                <option value="morning">Утренняя смена (7:30 - 19:30)</option>
+                <option value="day">Дневная смена (8:00 - 17:00)</option>
+                <option value="night">Ночная смена (19:30 - 7:30)</option>
+            </select>
+            <input type="tel" id="regPhone" placeholder="Телефон" required style="width: 100%; margin-bottom: 10px;">
+            <input type="password" id="regPassword" placeholder="Пароль" required style="width: 100%; margin-bottom: 10px;">
+            <input type="password" id="regConfirmPassword" placeholder="Подтвердите пароль" required style="width: 100%; margin-bottom: 10px;">
+            <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                <input type="checkbox" id="regAgreement" required style="margin-right: 10px;">
+                Согласен с политикой конфиденциальности
+            </label>
+            <button type="submit" style="width: 100%;">Зарегистрироваться</button>
+        </form>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            debugLog.appendChild(logEntry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+        
+        function checkFunctions() {
+            log('=== ПРОВЕРКА ФУНКЦИЙ ===', 'info');
+            
+            const functions = [
+                'getShiftData',
+                'getDepartmentName', 
+                'getEmployeesData',
+                'showMainApp',
+                'hideAuthModal',
+                'showNotification'
+            ];
+            
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    log(`✅ ${funcName} - найдена`, 'success');
+                } else {
+                    log(`❌ ${funcName} - НЕ НАЙДЕНА`, 'error');
+                }
+            });
+            
+            // Проверка глобальных переменных
+            log('=== ПРОВЕРКА ПЕРЕМЕННЫХ ===', 'info');
+            if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+                log('✅ EMPLOYEES_DATABASE - найдена', 'success');
+            } else {
+                log('❌ EMPLOYEES_DATABASE - НЕ НАЙДЕНА', 'error');
+            }
+        }
+        
+        function checkForm() {
+            log('=== ПРОВЕРКА ФОРМЫ ===', 'info');
+            
+            const requiredFields = [
+                'regFirstName', 'regLastName', 'regEmail', 'regPosition', 
+                'regDepartment', 'regShift', 'regPhone', 'regPassword', 
+                'regConfirmPassword', 'regAgreement'
+            ];
+            
+            requiredFields.forEach(fieldId => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    log(`✅ ${fieldId} - найден`, 'success');
+                } else {
+                    log(`❌ ${fieldId} - НЕ НАЙДЕН`, 'error');
+                }
+            });
+        }
+        
+        function testRegistration() {
+            log('=== ТЕСТ РЕГИСТРАЦИИ ===', 'info');
+            
+            try {
+                // Заполняем форму тестовыми данными
+                document.getElementById('regFirstName').value = 'Тест';
+                document.getElementById('regLastName').value = 'Тестов';
+                document.getElementById('regEmail').value = 'test@example.com';
+                document.getElementById('regPosition').value = 'Тестер';
+                document.getElementById('regDepartment').value = 'production';
+                document.getElementById('regShift').value = 'day';
+                document.getElementById('regPhone').value = '+7 (495) 123-45-67';
+                document.getElementById('regPassword').value = '123456';
+                document.getElementById('regConfirmPassword').value = '123456';
+                document.getElementById('regAgreement').checked = true;
+                
+                log('Форма заполнена тестовыми данными', 'info');
+                
+                // Проверяем доступность функций
+                if (typeof getShiftData === 'function') {
+                    const shiftData = getShiftData('day');
+                    log(`getShiftData('day') = ${JSON.stringify(shiftData)}`, 'info');
+                } else {
+                    log('getShiftData не доступна', 'error');
+                }
+                
+                if (typeof getDepartmentName === 'function') {
+                    const deptName = getDepartmentName('production');
+                    log(`getDepartmentName('production') = ${deptName}`, 'info');
+                } else {
+                    log('getDepartmentName не доступна', 'error');
+                }
+                
+                if (typeof getEmployeesData === 'function') {
+                    const employees = getEmployeesData();
+                    log(`getEmployeesData() = ${employees.length} сотрудников`, 'info');
+                } else {
+                    log('getEmployeesData не доступна', 'error');
+                }
+                
+            } catch (error) {
+                log(`Ошибка при тестировании: ${error.message}`, 'error');
+            }
+        }
+        
+        // Загружаем основные скрипты
+        function loadScripts() {
+            log('Загрузка скриптов...', 'info');
+            
+            // Загружаем employees-data.js
+            const script1 = document.createElement('script');
+            script1.src = 'employees-data.js';
+            script1.onload = () => log('employees-data.js загружен', 'success');
+            script1.onerror = () => log('Ошибка загрузки employees-data.js', 'error');
+            document.head.appendChild(script1);
+            
+            // Загружаем script.js
+            const script2 = document.createElement('script');
+            script2.src = 'script.js';
+            script2.onload = () => {
+                log('script.js загружен', 'success');
+                checkFunctions();
+            };
+            script2.onerror = () => log('Ошибка загрузки script.js', 'error');
+            document.head.appendChild(script2);
+        }
+        
+        // Обработчик формы
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            log('Отправка формы...', 'info');
+            
+            try {
+                // Проверяем доступность функций
+                if (typeof getShiftData !== 'function') {
+                    log('getShiftData не доступна!', 'error');
+                    return;
+                }
+                
+                if (typeof getDepartmentName !== 'function') {
+                    log('getDepartmentName не доступна!', 'error');
+                    return;
+                }
+                
+                if (typeof getEmployeesData !== 'function') {
+                    log('getEmployeesData не доступна!', 'error');
+                    return;
+                }
+                
+                // Получаем данные формы
+                const firstName = document.getElementById('regFirstName').value;
+                const lastName = document.getElementById('regLastName').value;
+                const email = document.getElementById('regEmail').value;
+                const position = document.getElementById('regPosition').value;
+                const department = document.getElementById('regDepartment').value;
+                const shift = document.getElementById('regShift').value;
+                const phone = document.getElementById('regPhone').value;
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = document.getElementById('regConfirmPassword').value;
+                const agreement = document.getElementById('regAgreement').checked;
+                
+                log(`Данные: ${firstName} ${lastName}, ${email}, ${position}, ${department}, ${shift}`, 'info');
+                
+                // Валидация
+                if (!firstName || !lastName || !email || !position || !department || !shift || !phone || !password || !confirmPassword) {
+                    log('Не все поля заполнены', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    log('Пароли не совпадают', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    log('Пароль слишком короткий', 'error');
+                    return;
+                }
+                
+                if (!agreement) {
+                    log('Нет согласия', 'error');
+                    return;
+                }
+                
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    log('Некорректный email', 'error');
+                    return;
+                }
+                
+                // Проверка существующего пользователя
+                const employees = getEmployeesData();
+                const existingUser = employees.find(emp => emp.email === email);
+                
+                if (existingUser) {
+                    log('Пользователь уже существует', 'error');
+                    return;
+                }
+                
+                // Создание нового пользователя
+                const shiftData = getShiftData(shift);
+                const newUser = {
+                    id: employees.length + 1,
+                    name: firstName + ' ' + lastName,
+                    position: position,
+                    department: department,
+                    departmentName: getDepartmentName(department),
+                    shift: shift,
+                    shiftName: shiftData.name,
+                    email: email,
+                    phone: phone,
+                    status: 'working',
+                    statusName: 'На работе',
+                    schedule: shiftData.time,
+                    avatar: firstName.charAt(0) + lastName.charAt(0),
+                    hireDate: new Date().toISOString().split('T')[0],
+                    salary: {
+                        baseSalary: 50000,
+                        bonus: 0,
+                        nightShift: 0,
+                        hazardPay: 0,
+                        overtime: 0,
+                        holidayWork: 0,
+                        total: 50000
+                    },
+                    workHours: {
+                        regular: 160,
+                        night: 0,
+                        overtime: 0,
+                        holiday: 0
+                    }
+                };
+                
+                log('Создан новый пользователь: ' + JSON.stringify(newUser, null, 2), 'info');
+                
+                // Сохранение
+                const newEmployees = [...employees, newUser];
+                localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
+                log('Пользователь сохранен в localStorage', 'success');
+                
+                // Авторизация
+                const userData = {
+                    id: newUser.id,
+                    name: newUser.name,
+                    email: newUser.email,
+                    position: newUser.position,
+                    department: newUser.department,
+                    departmentName: newUser.departmentName,
+                    avatar: newUser.avatar
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                log('Пользователь авторизован', 'success');
+                
+                log('🎉 РЕГИСТРАЦИЯ УСПЕШНА!', 'success');
+                
+            } catch (error) {
+                log(`Ошибка: ${error.message}`, 'error');
+                console.error('Ошибка регистрации:', error);
+            }
+        });
+        
+        // Запускаем при загрузке
+        window.onload = function() {
+            log('Страница загружена', 'info');
+            loadScripts();
+        };
+    </script>
+</body>
+</html>

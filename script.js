@@ -818,7 +818,7 @@ function handleLogin(e) {
     }
     
     // Check if user exists in employees database
-    const employees = typeof EMPLOYEES_DATABASE !== 'undefined' ? EMPLOYEES_DATABASE : [];
+    const employees = getEmployeesData();
     const user = employees.find(emp => emp.email === email);
     
     if (!user) {
@@ -1163,14 +1163,12 @@ function calculateSalaryComponents(employee) {
 }
 
 // Update salary when switching to salary section
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener for salary section
-    const salaryNavItem = document.querySelector('[data-section="salary"]');
-    if (salaryNavItem) {
-        salaryNavItem.addEventListener('click', function() {
-            setTimeout(() => {
-                updatePersonalSalary();
-            }, 100);
-        });
-    }
-});
+// Add event listener for salary section
+const salaryNavItem = document.querySelector('[data-section="salary"]');
+if (salaryNavItem) {
+    salaryNavItem.addEventListener('click', function() {
+        setTimeout(() => {
+            updatePersonalSalary();
+        }, 100);
+    });
+}

@@ -218,14 +218,24 @@
                 
                 <div class="salary-overview">
                     <div class="salary-card">
-                        <h3>Текущая зарплата</h3>
-                        <div class="salary-amount">75,000 ₽</div>
+                        <h3>Общая зарплата</h3>
+                        <div class="salary-amount" id="totalSalary">0 ₽</div>
                         <p class="salary-period">за январь 2024</p>
                     </div>
                     <div class="salary-card">
                         <h3>Отработано часов</h3>
-                        <div class="hours-amount">160 ч</div>
+                        <div class="hours-amount" id="totalHours">0 ч</div>
                         <p class="hours-period">из 160 запланированных</p>
+                    </div>
+                    <div class="salary-card">
+                        <h3>Премия</h3>
+                        <div class="bonus-amount" id="bonusAmount">0 ₽</div>
+                        <p class="bonus-period">дополнительно к окладу</p>
+                    </div>
+                    <div class="salary-card">
+                        <h3>Надбавки</h3>
+                        <div class="allowance-amount" id="allowanceAmount">0 ₽</div>
+                        <p class="allowance-period">за вредность и ночные</p>
                     </div>
                 </div>
 
@@ -234,19 +244,53 @@
                     <div class="salary-breakdown">
                         <div class="breakdown-item">
                             <span class="breakdown-label">Оклад</span>
-                            <span class="breakdown-value">60,000 ₽</span>
+                            <span class="breakdown-value" id="baseSalary">0 ₽</span>
                         </div>
                         <div class="breakdown-item">
                             <span class="breakdown-label">Премия</span>
-                            <span class="breakdown-value">10,000 ₽</span>
+                            <span class="breakdown-value" id="bonus">0 ₽</span>
                         </div>
                         <div class="breakdown-item">
-                            <span class="breakdown-label">Доплата за переработку</span>
-                            <span class="breakdown-value">5,000 ₽</span>
+                            <span class="breakdown-label">Надбавка за ночное время</span>
+                            <span class="breakdown-value" id="nightShift">0 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Надбавка за вредность</span>
+                            <span class="breakdown-value" id="hazardPay">0 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Переработки</span>
+                            <span class="breakdown-value" id="overtime">0 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Работа в праздничные дни</span>
+                            <span class="breakdown-value" id="holidayWork">0 ₽</span>
                         </div>
                         <div class="breakdown-item total">
                             <span class="breakdown-label">Итого</span>
-                            <span class="breakdown-value">75,000 ₽</span>
+                            <span class="breakdown-value" id="totalSalaryBreakdown">0 ₽</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-hours-details">
+                    <h3>Рабочие часы</h3>
+                    <div class="hours-breakdown">
+                        <div class="hours-item">
+                            <span class="hours-label">Обычные часы</span>
+                            <span class="hours-value" id="regularHours">0 ч</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="hours-label">Ночные часы</span>
+                            <span class="hours-value" id="nightHours">0 ч</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="hours-label">Переработка</span>
+                            <span class="hours-value" id="overtimeHours">0 ч</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="hours-label">Праздничные дни</span>
+                            <span class="hours-value" id="holidayHours">0 ч</span>
                         </div>
                     </div>
                 </div>
@@ -261,17 +305,17 @@
                         </div>
                         <div class="history-row">
                             <span>Декабрь 2023</span>
-                            <span>75,000 ₽</span>
+                            <span id="decSalary">0 ₽</span>
                             <span class="status paid">Выплачено</span>
                         </div>
                         <div class="history-row">
                             <span>Ноябрь 2023</span>
-                            <span>72,000 ₽</span>
+                            <span id="novSalary">0 ₽</span>
                             <span class="status paid">Выплачено</span>
                         </div>
                         <div class="history-row">
                             <span>Октябрь 2023</span>
-                            <span>75,000 ₽</span>
+                            <span id="octSalary">0 ₽</span>
                             <span class="status paid">Выплачено</span>
                         </div>
                     </div>

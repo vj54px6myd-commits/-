@@ -843,6 +843,109 @@ body {
     }
 }
 
+/* Salary Components Styles */
+.salary-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.bonus-amount, .allowance-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #059669;
+}
+
+.bonus-period, .allowance-period {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.work-hours-details {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.work-hours-details h3 {
+    color: #1e40af;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.hours-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.hours-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #e5e7eb;
+}
+
+.hours-item:nth-child(1) {
+    border-left-color: #3b82f6;
+}
+
+.hours-item:nth-child(2) {
+    border-left-color: #7c3aed;
+}
+
+.hours-item:nth-child(3) {
+    border-left-color: #f59e0b;
+}
+
+.hours-item:nth-child(4) {
+    border-left-color: #ef4444;
+}
+
+.hours-label {
+    color: #374151;
+    font-weight: 500;
+}
+
+.hours-value {
+    font-weight: 600;
+    color: #1e40af;
+    font-size: 1.1rem;
+}
+
+/* Enhanced salary breakdown */
+.salary-breakdown .breakdown-item:nth-child(1) {
+    border-left-color: #3b82f6;
+}
+
+.salary-breakdown .breakdown-item:nth-child(2) {
+    border-left-color: #10b981;
+}
+
+.salary-breakdown .breakdown-item:nth-child(3) {
+    border-left-color: #7c3aed;
+}
+
+.salary-breakdown .breakdown-item:nth-child(4) {
+    border-left-color: #f59e0b;
+}
+
+.salary-breakdown .breakdown-item:nth-child(5) {
+    border-left-color: #ef4444;
+}
+
+.salary-breakdown .breakdown-item:nth-child(6) {
+    border-left-color: #8b5cf6;
+}
+
 /* Responsive Design for Employees */
 @media (max-width: 768px) {
     .employees-controls {

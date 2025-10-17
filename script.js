@@ -665,6 +665,7 @@ function showMainApp(user) {
     
     // Initialize other systems
     initializeEmployees();
+    updatePersonalSalary();
 }
 
 function updateUserInfo(user) {
@@ -859,7 +860,7 @@ function handleRegister(e) {
         return;
     }
     
-    // Create new user
+    // Create new user with salary structure
     const newUser = {
         id: employees.length + 1,
         name: firstName + ' ' + lastName,
@@ -873,7 +874,21 @@ function handleRegister(e) {
         schedule: 'Пн-Пт: 08:00 - 17:00',
         avatar: firstName.charAt(0) + lastName.charAt(0),
         hireDate: new Date().toISOString().split('T')[0],
-        salary: 50000
+        salary: {
+            baseSalary: 50000,
+            bonus: 0,
+            nightShift: 0,
+            hazardPay: 0,
+            overtime: 0,
+            holidayWork: 0,
+            total: 50000
+        },
+        workHours: {
+            regular: 160,
+            night: 0,
+            overtime: 0,
+            holiday: 0
+        }
     };
     
     // In a real app, this would be saved to a database
@@ -920,3 +935,166 @@ function getDepartmentName(departmentCode) {
     };
     return departments[departmentCode] || 'Неизвестный отдел';
 }
+
+// Personal Salary Management
+function updatePersonalSalary() {
+    const currentUser = getCurrentUser();
+    if (!currentUser) return;
+    
+    // Get employee data
+    const employees = getEmployeesData();
+    const employee = employees.find(emp => emp.id === currentUser.id);
+    
+    if (!employee || !employee.salary) {
+        console.log('Employee salary data not found');
+        return;
+    }
+    
+    // Update salary overview
+    updateSalaryOverview(employee);
+    
+    // Update salary breakdown
+    updateSalaryBreakdown(employee);
+    
+    // Update work hours
+    updateWorkHours(employee);
+    
+    // Update salary history
+    updateSalaryHistory(employee);
+}
+
+function getEmployeesData() {
+    const storedEmployees = localStorage.getItem('employeesDatabase');
+    if (storedEmployees) {
+        return JSON.parse(storedEmployees);
+    } else if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+        return EMPLOYEES_DATABASE;
+    }
+    return [];
+}
+
+function updateSalaryOverview(employee) {
+    const totalSalary = document.getElementById('totalSalary');
+    const totalHours = document.getElementById('totalHours');
+    const bonusAmount = document.getElementById('bonusAmount');
+    const allowanceAmount = document.getElementById('allowanceAmount');
+    
+    if (totalSalary) {
+        totalSalary.textContent = formatCurrency(employee.salary.total);
+    }
+    
+    if (totalHours) {
+        const totalWorkHours = employee.workHours.regular + employee.workHours.night + 
+                              employee.workHours.overtime + employee.workHours.holiday;
+        totalHours.textContent = totalWorkHours + ' ч';
+    }
+    
+    if (bonusAmount) {
+        bonusAmount.textContent = formatCurrency(employee.salary.bonus);
+    }
+    
+    if (allowanceAmount) {
+        const totalAllowances = employee.salary.nightShift + employee.salary.hazardPay + 
+                               employee.salary.overtime + employee.salary.holidayWork;
+        allowanceAmount.textContent = formatCurrency(totalAllowances);
+    }
+}
+
+function updateSalaryBreakdown(employee) {
+    const baseSalary = document.getElementById('baseSalary');
+    const bonus = document.getElementById('bonus');
+    const nightShift = document.getElementById('nightShift');
+    const hazardPay = document.getElementById('hazardPay');
+    const overtime = document.getElementById('overtime');
+    const holidayWork = document.getElementById('holidayWork');
+    const totalSalaryBreakdown = document.getElementById('totalSalaryBreakdown');
+    
+    if (baseSalary) baseSalary.textContent = formatCurrency(employee.salary.baseSalary);
+    if (bonus) bonus.textContent = formatCurrency(employee.salary.bonus);
+    if (nightShift) nightShift.textContent = formatCurrency(employee.salary.nightShift);
+    if (hazardPay) hazardPay.textContent = formatCurrency(employee.salary.hazardPay);
+    if (overtime) overtime.textContent = formatCurrency(employee.salary.overtime);
+    if (holidayWork) holidayWork.textContent = formatCurrency(employee.salary.holidayWork);
+    if (totalSalaryBreakdown) totalSalaryBreakdown.textContent = formatCurrency(employee.salary.total);
+}
+
+function updateWorkHours(employee) {
+    const regularHours = document.getElementById('regularHours');
+    const nightHours = document.getElementById('nightHours');
+    const overtimeHours = document.getElementById('overtimeHours');
+    const holidayHours = document.getElementById('holidayHours');
+    
+    if (regularHours) regularHours.textContent = employee.workHours.regular + ' ч';
+    if (nightHours) nightHours.textContent = employee.workHours.night + ' ч';
+    if (overtimeHours) overtimeHours.textContent = employee.workHours.overtime + ' ч';
+    if (holidayHours) holidayHours.textContent = employee.workHours.holiday + ' ч';
+}
+
+function updateSalaryHistory(employee) {
+    // Generate historical data based on current salary with some variation
+    const decSalary = document.getElementById('decSalary');
+    const novSalary = document.getElementById('novSalary');
+    const octSalary = document.getElementById('octSalary');
+    
+    if (decSalary) {
+        const decAmount = employee.salary.total + Math.floor(Math.random() * 5000) - 2500;
+        decSalary.textContent = formatCurrency(Math.max(decAmount, employee.salary.baseSalary));
+    }
+    
+    if (novSalary) {
+        const novAmount = employee.salary.total + Math.floor(Math.random() * 3000) - 1500;
+        novSalary.textContent = formatCurrency(Math.max(novAmount, employee.salary.baseSalary));
+    }
+    
+    if (octSalary) {
+        const octAmount = employee.salary.total + Math.floor(Math.random() * 4000) - 2000;
+        octSalary.textContent = formatCurrency(Math.max(octAmount, employee.salary.baseSalary));
+    }
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: 'RUB',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount).replace('₽', '₽');
+}
+
+// Calculate salary components based on work hours and rates
+function calculateSalaryComponents(employee) {
+    const rates = {
+        baseHourly: employee.salary.baseSalary / 160, // Base hourly rate
+        nightMultiplier: 1.2, // 20% extra for night work
+        hazardMultiplier: 1.15, // 15% extra for hazardous work
+        overtimeMultiplier: 1.5, // 50% extra for overtime
+        holidayMultiplier: 2.0 // 100% extra for holiday work
+    };
+    
+    const calculated = {
+        baseSalary: employee.salary.baseSalary,
+        bonus: employee.salary.bonus,
+        nightShift: Math.round(employee.workHours.night * rates.baseHourly * (rates.nightMultiplier - 1)),
+        hazardPay: Math.round(employee.workHours.regular * rates.baseHourly * (rates.hazardMultiplier - 1)),
+        overtime: Math.round(employee.workHours.overtime * rates.baseHourly * (rates.overtimeMultiplier - 1)),
+        holidayWork: Math.round(employee.workHours.holiday * rates.baseHourly * (rates.holidayMultiplier - 1))
+    };
+    
+    calculated.total = calculated.baseSalary + calculated.bonus + calculated.nightShift + 
+                      calculated.hazardPay + calculated.overtime + calculated.holidayWork;
+    
+    return calculated;
+}
+
+// Update salary when switching to salary section
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener for salary section
+    const salaryNavItem = document.querySelector('[data-section="salary"]');
+    if (salaryNavItem) {
+        salaryNavItem.addEventListener('click', function() {
+            setTimeout(() => {
+                updatePersonalSalary();
+            }, 100);
+        });
+    }
+});

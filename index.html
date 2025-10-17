@@ -13,7 +13,6 @@
         <div class="modal-content auth-modal">
             <div class="auth-tabs">
                 <button class="auth-tab active" data-tab="login">Вход</button>
-                <button class="auth-tab" data-tab="register">Регистрация</button>
             </div>
             
             <!-- Login Form -->
@@ -35,70 +34,6 @@
                 </div>
             </div>
             
-            <!-- Registration Form -->
-            <div id="registerForm" class="auth-form">
-                <h3>Регистрация сотрудника</h3>
-                <form id="registerFormElement">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="regFirstName">Имя:</label>
-                            <input type="text" id="regFirstName" required placeholder="Имя">
-                        </div>
-                        <div class="form-group">
-                            <label for="regLastName">Фамилия:</label>
-                            <input type="text" id="regLastName" required placeholder="Фамилия">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="regEmail">Email:</label>
-                        <input type="email" id="regEmail" required placeholder="ваш@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="regPosition">Должность:</label>
-                        <input type="text" id="regPosition" required placeholder="Ваша должность">
-                    </div>
-                    <div class="form-group">
-                        <label for="regDepartment">Отдел:</label>
-                        <select id="regDepartment" required>
-                            <option value="">Выберите отдел</option>
-                            <option value="production">Производство</option>
-                            <option value="laboratory">Лаборатория</option>
-                            <option value="quality">Контроль качества</option>
-                            <option value="safety">Безопасность</option>
-                            <option value="management">Управление</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="regShift">Смена:</label>
-                        <select id="regShift" required>
-                            <option value="">Выберите смену</option>
-                            <option value="morning">Утренняя смена (7:30 - 19:30)</option>
-                            <option value="day">Дневная смена (8:00 - 17:00)</option>
-                            <option value="night">Ночная смена (19:30 - 7:30)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="regPhone">Телефон:</label>
-                        <input type="tel" id="regPhone" required placeholder="+7 (495) 123-45-67">
-                    </div>
-                    <div class="form-group">
-                        <label for="regPassword">Пароль:</label>
-                        <input type="password" id="regPassword" required placeholder="Минимум 6 символов">
-                    </div>
-                    <div class="form-group">
-                        <label for="regConfirmPassword">Подтвердите пароль:</label>
-                        <input type="password" id="regConfirmPassword" required placeholder="Повторите пароль">
-                    </div>
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="regAgreement" required>
-                            <span class="checkmark"></span>
-                            Согласен с <a href="#" id="privacyPolicy">политикой конфиденциальности</a>
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Зарегистрироваться</button>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -397,10 +332,6 @@
                             <option value="safety">Безопасность</option>
                             <option value="management">Управление</option>
                         </select>
-                        <button class="btn btn-primary" id="addEmployeeBtn">
-                            <i class="fas fa-plus"></i>
-                            Добавить сотрудника
-                        </button>
                     </div>
                 </div>
                 

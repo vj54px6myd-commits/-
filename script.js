@@ -733,15 +733,6 @@ function initializeEmployees() {
         }
     }
     
-    // Add employee button
-    function setupAddEmployee() {
-        const addBtn = document.getElementById('addEmployeeBtn');
-        if (!addBtn) return;
-        
-        addBtn.addEventListener('click', function() {
-            showNotification('Функция добавления сотрудника будет доступна в следующем обновлении', 'info');
-        });
-    }
     
     // Update statistics
     function updateStatistics() {
@@ -765,7 +756,6 @@ function initializeEmployees() {
     setupSearch();
     setupDepartmentFilter();
     setupModalEvents();
-    setupAddEmployee();
     updateStatistics();
     
     // Add keyboard shortcut for employees section
@@ -881,14 +871,6 @@ function setupAuthEventListeners() {
         loginForm.addEventListener('submit', handleLogin);
     }
     
-    // Register form
-    const registerForm = document.getElementById('registerFormElement');
-    if (registerForm) {
-        console.log('Форма регистрации найдена, добавляем обработчик');
-        registerForm.addEventListener('submit', handleRegister);
-    } else {
-        console.error('Форма регистрации не найдена!');
-    }
     
     // Close modal
     const authModal = document.getElementById('authModal');

@@ -219,6 +219,29 @@
         </main>
     </div>
 
+    <!-- API Configuration -->
+    <script src="config.js"></script>
+    
+    <!-- API Module -->
+    <script src="api.js"></script>
+    
+    <!-- Data Manager -->
+    <script src="data-manager.js"></script>
+    
+    <!-- API Examples (опционально) -->
+    <script src="api-examples.js"></script>
+    
+    <!-- Main Application Script -->
     <script src="script.js"></script>
+    
+    <!-- Initialize APIs -->
+    <script>
+        // Инициализация API при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof initializeAPIs === 'function') {
+                initializeAPIs();
+            }
+        });
+    </script>
 </body>
 </html>

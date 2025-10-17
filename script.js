@@ -1,4 +1,24 @@
 // Employee Portal JavaScript
+
+// Global function for shift data
+function getShiftData(shiftCode) {
+    const shifts = {
+        morning: {
+            name: "Утренняя смена",
+            time: "7:30 - 19:30"
+        },
+        night: {
+            name: "Ночная смена",
+            time: "19:30 - 7:30"
+        },
+        day: {
+            name: "Дневная смена",
+            time: "8:00 - 17:00"
+        }
+    };
+    return shifts[shiftCode] || shifts.day;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize authentication system
     initializeAuth();
@@ -97,24 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Get shift data by shift code
-    function getShiftData(shiftCode) {
-        const shifts = {
-            morning: {
-                name: "Утренняя смена",
-                time: "7:30 - 19:30"
-            },
-            night: {
-                name: "Ночная смена",
-                time: "19:30 - 7:30"
-            },
-            day: {
-                name: "Дневная смена",
-                time: "8:00 - 17:00"
-            }
-        };
-        return shifts[shiftCode] || shifts.day;
-    }
     
     // Simulate real-time updates for salary information
     function updateSalaryInfo() {
@@ -898,8 +900,10 @@ function handleRegister(e) {
         return;
     }
     
-    if (!email.includes('@soda-chlorate.ru')) {
-        showNotification('Используйте корпоративный email (@soda-chlorate.ru)', 'error');
+    // Email validation - any valid email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showNotification('Введите корректный email адрес', 'error');
         return;
     }
     

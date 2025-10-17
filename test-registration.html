@@ -74,7 +74,7 @@
             
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" placeholder="имя.фамилия@soda-chlorate.ru" required>
+                <input type="email" id="email" placeholder="ваш@email.com" required>
             </div>
             
             <div class="form-group">
@@ -190,8 +190,10 @@
                 return;
             }
             
-            if (!email.includes('@soda-chlorate.ru')) {
-                showNotification('Используйте корпоративный email (@soda-chlorate.ru)', 'error');
+            // Email validation - any valid email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Введите корректный email адрес', 'error');
                 return;
             }
             

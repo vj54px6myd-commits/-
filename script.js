@@ -344,25 +344,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const darkThemeStyle = document.createElement('style');
     darkThemeStyle.textContent = `
         .dark-theme {
-            background-color: #1f2937;
-            color: #f9fafb;
+            background-color: #0f172a;
+            color: #f8fafc;
         }
         
         .dark-theme .container {
-            background-color: #111827;
+            background-color: #0f172a;
         }
         
         .dark-theme .nav {
-            background-color: #1f2937;
-            border-bottom-color: #374151;
+            background-color: #1e293b;
+            border-bottom-color: #334155;
         }
         
         .dark-theme .nav-item {
-            color: #d1d5db;
+            color: #e2e8f0;
         }
         
         .dark-theme .nav-item:hover {
-            background-color: #374151;
+            background-color: #334155;
             color: #60a5fa;
         }
         
@@ -377,28 +377,171 @@ document.addEventListener('DOMContentLoaded', function() {
         .dark-theme .news-item,
         .dark-theme .employee-card,
         .dark-theme .stat-card {
-            background-color: #1f2937;
-            border-color: #374151;
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
         }
         
         .dark-theme .breakdown-item {
-            background-color: #374151;
+            background-color: #334155;
+            color: #f1f5f9;
         }
         
         .dark-theme .breakdown-item.total {
             background-color: #1e3a8a;
+            color: #ffffff;
         }
         
         .dark-theme .modal-content {
-            background-color: #1f2937;
+            background-color: #1e293b;
+            color: #f1f5f9;
         }
         
         .dark-theme .modal-body {
-            background-color: #1f2937;
+            background-color: #1e293b;
+            color: #f1f5f9;
         }
         
         .dark-theme .modal-footer {
-            background-color: #374151;
+            background-color: #334155;
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .section-title {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .section-subtitle {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .welcome-content h1 {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .welcome-content p {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .employee-name {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .employee-position {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .employee-department {
+            color: #94a3b8;
+        }
+        
+        .dark-theme .news-title {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .news-excerpt {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .news-date {
+            color: #94a3b8;
+        }
+        
+        .dark-theme .schedule-time {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .schedule-status {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .salary-amount {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .salary-label {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .breakdown-label {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .breakdown-value {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .stat-value {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .stat-label {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .form-group label {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .form-group input,
+        .dark-theme .form-group select {
+            background-color: #334155;
+            border-color: #475569;
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .form-group input:focus,
+        .dark-theme .form-group select:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+        
+        .dark-theme .checkbox-label {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .btn {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .btn-primary {
+            background-color: #1e3a8a;
+            border-color: #1e3a8a;
+        }
+        
+        .dark-theme .btn-primary:hover {
+            background-color: #1e40af;
+            border-color: #1e40af;
+        }
+        
+        .dark-theme .btn-secondary {
+            background-color: #334155;
+            border-color: #475569;
+        }
+        
+        .dark-theme .btn-secondary:hover {
+            background-color: #475569;
+            border-color: #64748b;
+        }
+        
+        .dark-theme .header-content h1 {
+            color: #f1f5f9;
+        }
+        
+        .dark-theme .header-content p {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .auth-tab {
+            color: #cbd5e1;
+        }
+        
+        .dark-theme .auth-tab.active {
+            color: #60a5fa;
+        }
+        
+        .dark-theme .auth-tab:hover {
+            color: #f1f5f9;
         }
     `;
     document.head.appendChild(darkThemeStyle);

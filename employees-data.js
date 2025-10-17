@@ -1,6 +1,25 @@
 // База данных сотрудников Soda-Chlorate
 // Для добавления нового сотрудника скопируйте шаблон и заполните данные
 
+// Графики работы
+const WORK_SHIFTS = {
+    morning: {
+        name: "Утренняя смена",
+        time: "7:30 - 19:30",
+        description: "Утренняя смена (7:30 - 19:30)"
+    },
+    night: {
+        name: "Ночная смена", 
+        time: "19:30 - 7:30",
+        description: "Ночная смена (19:30 - 7:30)"
+    },
+    day: {
+        name: "Дневная смена",
+        time: "8:00 - 17:00", 
+        description: "Дневная смена (8:00 - 17:00)"
+    }
+};
+
 const EMPLOYEES_DATABASE = [
     {
         id: 1,
@@ -12,7 +31,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-67",
         status: "working", // working, vacation, sick, offline
         statusName: "На работе",
-        schedule: "Пн-Пт: 08:00 - 17:00",
+        shift: "morning", // morning, night, day
+        shiftName: "Утренняя смена",
+        schedule: "7:30 - 19:30",
         avatar: "ИП",
         hireDate: "2020-03-15",
         salary: {
@@ -41,7 +62,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-68",
         status: "working",
         statusName: "На работе",
-        schedule: "Пн-Пт: 09:00 - 18:00",
+        shift: "day",
+        shiftName: "Дневная смена",
+        schedule: "8:00 - 17:00",
         avatar: "МС",
         hireDate: "2021-07-10",
         salary: {
@@ -70,7 +93,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-69",
         status: "vacation",
         statusName: "В отпуске",
-        schedule: "Пн-Пт: 08:30 - 17:30",
+        shift: "night",
+        shiftName: "Ночная смена",
+        schedule: "19:30 - 7:30",
         avatar: "АК",
         hireDate: "2019-11-20",
         salary: {
@@ -99,7 +124,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-70",
         status: "working",
         statusName: "На работе",
-        schedule: "Пн-Пт: 08:00 - 17:00",
+        shift: "day",
+        shiftName: "Дневная смена",
+        schedule: "8:00 - 17:00",
         avatar: "ЕВ",
         hireDate: "2022-01-15",
         salary: {
@@ -128,7 +155,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-71",
         status: "sick",
         statusName: "На больничном",
-        schedule: "Пн-Пт: 09:00 - 18:00",
+        shift: "morning",
+        shiftName: "Утренняя смена",
+        schedule: "7:30 - 19:30",
         avatar: "ДН",
         hireDate: "2018-05-10",
         salary: {
@@ -157,7 +186,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-72",
         status: "working",
         statusName: "На работе",
-        schedule: "Пн-Пт: 08:00 - 17:00",
+        shift: "day",
+        shiftName: "Дневная смена",
+        schedule: "8:00 - 17:00",
         avatar: "АС",
         hireDate: "2021-09-01",
         salary: {
@@ -186,7 +217,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-73",
         status: "working",
         statusName: "На работе",
-        schedule: "Сменный график",
+        shift: "night",
+        shiftName: "Ночная смена",
+        schedule: "19:30 - 7:30",
         avatar: "СМ",
         hireDate: "2020-12-03",
         salary: {
@@ -215,7 +248,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-74",
         status: "vacation",
         statusName: "В отпуске",
-        schedule: "Пн-Пт: 08:30 - 17:30",
+        shift: "morning",
+        shiftName: "Утренняя смена",
+        schedule: "7:30 - 19:30",
         avatar: "ОЛ",
         hireDate: "2022-03-20",
         salary: {
@@ -246,7 +281,9 @@ const EMPLOYEES_DATABASE = [
         phone: "+7 (495) 123-45-XX",
         status: "working", // working, vacation, sick, offline
         statusName: "На работе", // На работе, В отпуске, На больничном, Не на работе
-        schedule: "Пн-Пт: 08:00 - 17:00",
+        shift: "day", // morning, night, day
+        shiftName: "Дневная смена", // Утренняя смена, Ночная смена, Дневная смена
+        schedule: "8:00 - 17:00", // 7:30 - 19:30, 19:30 - 7:30, 8:00 - 17:00
         avatar: "ИФ", // Инициалы
         hireDate: "2024-01-01",
         salary: {

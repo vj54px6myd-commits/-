@@ -60,13 +60,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize week display
     updateWeekDisplay();
     
-    // Simulate real-time updates for salary information
-    function updateSalaryInfo() {
-        // This would typically fetch data from an API
-        const currentTime = new Date();
-        const hours = currentTime.getHours();
+    // Update schedule based on user's shift
+    function updateSchedule() {
+        const currentUser = getCurrentUser();
+        if (!currentUser) return;
         
-        // Simulate different shift times based on current time
+        const employees = getEmployeesData();
+        const employee = employees.find(emp => emp.id === currentUser.id);
+        
+        if (!employee) return;
+        
         const scheduleDays = document.querySelectorAll('.schedule-day:not(.weekend)');
         
         scheduleDays.forEach((day, index) => {
@@ -75,21 +78,48 @@ document.addEventListener('DOMContentLoaded', function() {
             const shiftType = shiftInfo.querySelector('.shift-type');
             
             if (index < 5) { // Monday to Friday
-                if (hours >= 6 && hours < 14) {
-                    shiftTime.textContent = '08:00 - 17:00';
-                    shiftType.textContent = 'Дневная смена';
-                    day.style.borderLeft = '4px solid #059669';
-                } else if (hours >= 14 && hours < 22) {
-                    shiftTime.textContent = '14:00 - 23:00';
-                    shiftType.textContent = 'Вечерняя смена';
-                    day.style.borderLeft = '4px solid #dc2626';
+                // Get shift information from employee data
+                const shift = employee.shift || 'day';
+                const shiftData = getShiftData(shift);
+                
+                shiftTime.textContent = shiftData.time;
+                shiftType.textContent = shiftData.name;
+                
+                // Set color based on shift type
+                if (shift === 'morning') {
+                    day.style.borderLeft = '4px solid #059669'; // Green for morning
+                } else if (shift === 'night') {
+                    day.style.borderLeft = '4px solid #7c3aed'; // Purple for night
                 } else {
-                    shiftTime.textContent = '22:00 - 07:00';
-                    shiftType.textContent = 'Ночная смена';
-                    day.style.borderLeft = '4px solid #7c3aed';
+                    day.style.borderLeft = '4px solid #3b82f6'; // Blue for day
                 }
             }
         });
+    }
+    
+    // Get shift data by shift code
+    function getShiftData(shiftCode) {
+        const shifts = {
+            morning: {
+                name: "Утренняя смена",
+                time: "7:30 - 19:30"
+            },
+            night: {
+                name: "Ночная смена",
+                time: "19:30 - 7:30"
+            },
+            day: {
+                name: "Дневная смена",
+                time: "8:00 - 17:00"
+            }
+        };
+        return shifts[shiftCode] || shifts.day;
+    }
+    
+    // Simulate real-time updates for salary information
+    function updateSalaryInfo() {
+        // This would typically fetch data from an API
+        updateSchedule();
     }
     
     // Update schedule every hour
@@ -447,6 +477,10 @@ function initializeEmployees() {
                 <div class="employee-detail">
                     <i class="fas fa-clock"></i>
                     <span>${employee.schedule}</span>
+                </div>
+                <div class="employee-detail">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="shift-${employee.shift || 'day'}">${employee.shiftName || 'Смена не указана'}</span>
                 </div>
                 <div class="employee-department">${employee.departmentName}</div>
             </div>
@@ -825,6 +859,7 @@ function handleRegister(e) {
     const email = document.getElementById('regEmail').value;
     const position = document.getElementById('regPosition').value;
     const department = document.getElementById('regDepartment').value;
+    const shift = document.getElementById('regShift').value;
     const phone = document.getElementById('regPhone').value;
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
@@ -843,7 +878,7 @@ function handleRegister(e) {
     }
     
     // Validation
-    if (!firstName || !lastName || !email || !position || !department || !phone || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !position || !department || !shift || !phone || !password || !confirmPassword) {
         showNotification('Пожалуйста, заполните все поля', 'error');
         return;
     }
@@ -878,17 +913,20 @@ function handleRegister(e) {
     }
     
     // Create new user with salary structure
+    const shiftData = getShiftData(shift);
     const newUser = {
         id: employees.length + 1,
         name: firstName + ' ' + lastName,
         position: position,
         department: department,
         departmentName: getDepartmentName(department),
+        shift: shift,
+        shiftName: shiftData.name,
         email: email,
         phone: phone,
         status: 'working',
         statusName: 'На работе',
-        schedule: 'Пн-Пт: 08:00 - 17:00',
+        schedule: shiftData.time,
         avatar: firstName.charAt(0) + lastName.charAt(0),
         hireDate: new Date().toISOString().split('T')[0],
         salary: {
@@ -1095,10 +1133,20 @@ function calculateSalaryComponents(employee) {
         holidayMultiplier: 2.0 // 100% extra for holiday work
     };
     
+    // Calculate shift-specific adjustments
+    let shiftAdjustment = 0;
+    if (employee.shift === 'night') {
+        // Night shift gets 20% extra for all regular hours
+        shiftAdjustment = Math.round(employee.workHours.regular * rates.baseHourly * 0.2);
+    } else if (employee.shift === 'morning') {
+        // Morning shift gets 10% extra for all regular hours
+        shiftAdjustment = Math.round(employee.workHours.regular * rates.baseHourly * 0.1);
+    }
+    
     const calculated = {
         baseSalary: employee.salary.baseSalary,
         bonus: employee.salary.bonus,
-        nightShift: Math.round(employee.workHours.night * rates.baseHourly * (rates.nightMultiplier - 1)),
+        nightShift: Math.round(employee.workHours.night * rates.baseHourly * (rates.nightMultiplier - 1)) + shiftAdjustment,
         hazardPay: Math.round(employee.workHours.regular * rates.baseHourly * (rates.hazardMultiplier - 1)),
         overtime: Math.round(employee.workHours.overtime * rates.baseHourly * (rates.overtimeMultiplier - 1)),
         holidayWork: Math.round(employee.workHours.holiday * rates.baseHourly * (rates.holidayMultiplier - 1))

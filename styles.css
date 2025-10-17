@@ -693,6 +693,22 @@ body {
     width: 16px;
 }
 
+/* Shift indicators */
+.shift-morning {
+    color: #059669;
+    font-weight: 600;
+}
+
+.shift-day {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.shift-night {
+    color: #7c3aed;
+    font-weight: 600;
+}
+
 .employee-department {
     display: inline-block;
     padding: 0.25rem 0.75rem;

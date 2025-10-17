@@ -1253,18 +1253,13 @@ function addEmployeeAutomatically(employeeData) {
             accessLevelName: employeeData.accessLevel === 'admin' ? 'Администратор' : 
                            employeeData.accessLevel === 'manager' ? 'Менеджер' : 'Сотрудник',
             salary: {
-                baseSalary: employeeData.salary?.baseSalary || 50000,
-                bonusPercent: employeeData.salary?.bonusPercent || 0,
-                hazardPay: employeeData.salary?.hazardPay || 0,
-                nightShiftMultiplier: employeeData.salary?.nightShiftMultiplier || 1.2,
-                morningShiftMultiplier: employeeData.salary?.morningShiftMultiplier || 1.1,
-                hazardMultiplier: employeeData.salary?.hazardMultiplier || 1.15,
-                overtimeMultiplier: employeeData.salary?.overtimeMultiplier || 1.5,
-                holidayMultiplier: employeeData.salary?.holidayMultiplier || 2.0,
-                bonus: 0, // Рассчитывается автоматически
-                nightShift: 0, // Рассчитывается автоматически
+                baseSalary: employeeData.salary?.baseSalary || 50000, // Индивидуальный оклад
+                bonusPercent: employeeData.salary?.bonusPercent || 47, // 47% премия (стандарт)
+                hazardPay: employeeData.salary?.hazardPay || 0, // Фиксированная надбавка за вредность
+                bonus: 0, // Рассчитывается автоматически (47% от оклада)
+                nightShift: 0, // Рассчитывается автоматически (+40% за ночную смену)
                 overtime: 0, // Рассчитывается автоматически
-                holidayWork: 0, // Рассчитывается автоматически
+                holidayWork: 0, // Рассчитывается автоматически (+100% за праздники)
                 total: 0 // Рассчитывается автоматически
             },
             workHours: {
@@ -1441,30 +1436,28 @@ function calculateSalaryComponents(employee) {
     const salaryConfig = employee.salary || {};
     const baseSalary = salaryConfig.baseSalary || 50000;
     
-    // Индивидуальные коэффициенты (если не указаны, используем стандартные)
-    const nightMultiplier = salaryConfig.nightShiftMultiplier || 1.2;
-    const morningMultiplier = salaryConfig.morningShiftMultiplier || 1.1;
-    const hazardMultiplier = salaryConfig.hazardMultiplier || 1.15;
-    const overtimeMultiplier = salaryConfig.overtimeMultiplier || 1.5;
-    const holidayMultiplier = salaryConfig.holidayMultiplier || 2.0;
+    // Стандартные коэффициенты согласно требованиям
+    const bonusPercent = salaryConfig.bonusPercent || 47; // 47% премия по умолчанию
+    const nightMultiplier = 1.4; // +40% за ночную смену
+    const holidayMultiplier = 2.0; // +100% за праздничные дни
+    const overtimeMultiplier = 1.5; // +50% за переработки (стандартно)
     
     const baseHourly = baseSalary / 160; // Базовая почасовая ставка
     
-    // Рассчитываем премию как процент от базовой зарплаты
-    const bonusPercent = salaryConfig.bonusPercent || 0;
+    // Рассчитываем премию (47% от оклада)
     const bonus = Math.round(baseSalary * (bonusPercent / 100));
     
     // Рассчитываем надбавки за смены
     let shiftAdjustment = 0;
     if (employee.shift === 'night') {
-        shiftAdjustment = Math.round(employee.workHours.regular * baseHourly * (nightMultiplier - 1));
-    } else if (employee.shift === 'morning') {
-        shiftAdjustment = Math.round(employee.workHours.regular * baseHourly * (morningMultiplier - 1));
+        // Ночная смена: +40% от оклада за все рабочие часы
+        shiftAdjustment = Math.round(baseSalary * 0.4);
     }
+    // Утренняя и дневная смены без надбавок
     
     // Рассчитываем остальные компоненты
-    const nightShift = Math.round(employee.workHours.night * baseHourly * (nightMultiplier - 1)) + shiftAdjustment;
-    const hazardPay = Math.round(employee.workHours.regular * baseHourly * (hazardMultiplier - 1)) + (salaryConfig.hazardPay || 0);
+    const nightShift = shiftAdjustment; // Вся надбавка за смену идет в nightShift
+    const hazardPay = salaryConfig.hazardPay || 0; // Фиксированная надбавка за вредность
     const overtime = Math.round(employee.workHours.overtime * baseHourly * (overtimeMultiplier - 1));
     const holidayWork = Math.round(employee.workHours.holiday * baseHourly * (holidayMultiplier - 1));
     

@@ -1,5 +1,7 @@
 // Employee Portal JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize authentication system
+    initializeAuth();
     // Navigation functionality
     const navItems = document.querySelectorAll('.nav-item');
     const contentSections = document.querySelectorAll('.content-section');
@@ -372,23 +374,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Employees Management Functions
 function initializeEmployees() {
-    // Получаем данные сотрудников из внешнего файла или используем встроенные
-    const employees = typeof EMPLOYEES_DATABASE !== 'undefined' ? EMPLOYEES_DATABASE : [
+    // Получаем данные сотрудников из localStorage или внешнего файла
+    let employees = [];
+    
+    // Try to get from localStorage first (includes registered users)
+    const storedEmployees = localStorage.getItem('employeesDatabase');
+    if (storedEmployees) {
+        employees = JSON.parse(storedEmployees);
+    } else if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+        employees = EMPLOYEES_DATABASE;
+        // Save to localStorage for future use
+        localStorage.setItem('employeesDatabase', JSON.stringify(employees));
+    } else {
         // Fallback данные, если внешний файл не загружен
-        {
-            id: 1,
-            name: "Иван Петров",
-            position: "Инженер-химик",
-            department: "production",
-            departmentName: "Производство",
-            email: "ivan.petrov@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-67",
-            status: "working",
-            statusName: "На работе",
-            schedule: "Пн-Пт: 08:00 - 17:00",
-            avatar: "ИП"
-        }
-    ];
+        employees = [
+            {
+                id: 1,
+                name: "Иван Петров",
+                position: "Инженер-химик",
+                department: "production",
+                departmentName: "Производство",
+                email: "ivan.petrov@soda-chlorate.ru",
+                phone: "+7 (495) 123-45-67",
+                status: "working",
+                statusName: "На работе",
+                schedule: "Пн-Пт: 08:00 - 17:00",
+                avatar: "ИП"
+            }
+        ];
+        localStorage.setItem('employeesDatabase', JSON.stringify(employees));
+    }
     
     let filteredEmployees = [...employees];
     
@@ -580,4 +595,328 @@ function initializeEmployees() {
             document.querySelector('[data-section="employees"]').click();
         }
     });
+}
+
+// Authentication System
+function initializeAuth() {
+    // Check if user is logged in
+    const currentUser = getCurrentUser();
+    
+    if (currentUser) {
+        showMainApp(currentUser);
+    } else {
+        showWelcomeScreen();
+    }
+    
+    // Setup authentication event listeners
+    setupAuthEventListeners();
+}
+
+function showWelcomeScreen() {
+    // Hide main container
+    const mainContainer = document.getElementById('mainContainer');
+    if (mainContainer) {
+        mainContainer.style.display = 'none';
+    }
+    
+    // Create welcome screen
+    const welcomeScreen = document.createElement('div');
+    welcomeScreen.className = 'welcome-screen';
+    welcomeScreen.innerHTML = `
+        <div class="welcome-content">
+            <h1><i class="fas fa-flask"></i> Soda-Chlorate</h1>
+            <p>Добро пожаловать в личный кабинет сотрудника</p>
+            <p>Войдите в систему или зарегистрируйтесь для доступа к персональной информации</p>
+            <div class="welcome-buttons">
+                <button class="welcome-btn primary" id="showLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Войти в систему
+                </button>
+                <button class="welcome-btn" id="showRegisterBtn">
+                    <i class="fas fa-user-plus"></i>
+                    Регистрация сотрудника
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(welcomeScreen);
+    
+    // Add event listeners
+    document.getElementById('showLoginBtn').addEventListener('click', () => showAuthModal('login'));
+    document.getElementById('showRegisterBtn').addEventListener('click', () => showAuthModal('register'));
+}
+
+function showMainApp(user) {
+    // Remove welcome screen if exists
+    const welcomeScreen = document.querySelector('.welcome-screen');
+    if (welcomeScreen) {
+        welcomeScreen.remove();
+    }
+    
+    // Show main container
+    const mainContainer = document.getElementById('mainContainer');
+    if (mainContainer) {
+        mainContainer.style.display = 'block';
+    }
+    
+    // Update user info
+    updateUserInfo(user);
+    
+    // Initialize other systems
+    initializeEmployees();
+}
+
+function updateUserInfo(user) {
+    const userName = document.getElementById('userName');
+    const userAvatar = document.getElementById('userAvatar');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (userName) {
+        userName.textContent = user.name;
+    }
+    
+    if (userAvatar) {
+        userAvatar.innerHTML = `<i class="fas fa-user"></i>`;
+    }
+    
+    if (logoutBtn) {
+        logoutBtn.style.display = 'block';
+    }
+}
+
+function setupAuthEventListeners() {
+    // Auth modal tabs
+    const authTabs = document.querySelectorAll('.auth-tab');
+    authTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            switchAuthTab(tabName);
+        });
+    });
+    
+    // Login form
+    const loginForm = document.getElementById('loginFormElement');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    // Register form
+    const registerForm = document.getElementById('registerFormElement');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
+    
+    // Close modal
+    const authModal = document.getElementById('authModal');
+    if (authModal) {
+        authModal.addEventListener('click', function(e) {
+            if (e.target === authModal) {
+                hideAuthModal();
+            }
+        });
+    }
+    
+    // Logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+    
+    // Login nav item
+    const loginNavItem = document.getElementById('loginNavItem');
+    if (loginNavItem) {
+        loginNavItem.addEventListener('click', () => showAuthModal('login'));
+    }
+}
+
+function showAuthModal(tab) {
+    const authModal = document.getElementById('authModal');
+    if (authModal) {
+        authModal.style.display = 'block';
+        switchAuthTab(tab);
+    }
+}
+
+function hideAuthModal() {
+    const authModal = document.getElementById('authModal');
+    if (authModal) {
+        authModal.style.display = 'none';
+    }
+}
+
+function switchAuthTab(tabName) {
+    // Update tabs
+    const tabs = document.querySelectorAll('.auth-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-tab') === tabName) {
+            tab.classList.add('active');
+        }
+    });
+    
+    // Update forms
+    const forms = document.querySelectorAll('.auth-form');
+    forms.forEach(form => {
+        form.classList.remove('active');
+        if (form.id === tabName + 'Form') {
+            form.classList.add('active');
+        }
+    });
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    // Simple validation
+    if (!email || !password) {
+        showNotification('Пожалуйста, заполните все поля', 'error');
+        return;
+    }
+    
+    // Check if user exists in employees database
+    const employees = typeof EMPLOYEES_DATABASE !== 'undefined' ? EMPLOYEES_DATABASE : [];
+    const user = employees.find(emp => emp.email === email);
+    
+    if (!user) {
+        showNotification('Пользователь с таким email не найден', 'error');
+        return;
+    }
+    
+    // Simple password check (in real app, this would be hashed)
+    if (password !== 'password123') { // Default password for demo
+        showNotification('Неверный пароль', 'error');
+        return;
+    }
+    
+    // Login successful
+    const userData = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        position: user.position,
+        department: user.department,
+        departmentName: user.departmentName,
+        avatar: user.avatar
+    };
+    
+    // Save user session
+    localStorage.setItem('currentUser', JSON.stringify(userData));
+    
+    showNotification('Добро пожаловать, ' + user.name + '!', 'success');
+    hideAuthModal();
+    showMainApp(userData);
+}
+
+function handleRegister(e) {
+    e.preventDefault();
+    
+    const firstName = document.getElementById('regFirstName').value;
+    const lastName = document.getElementById('regLastName').value;
+    const email = document.getElementById('regEmail').value;
+    const position = document.getElementById('regPosition').value;
+    const department = document.getElementById('regDepartment').value;
+    const phone = document.getElementById('regPhone').value;
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('regConfirmPassword').value;
+    const agreement = document.getElementById('regAgreement').checked;
+    
+    // Validation
+    if (!firstName || !lastName || !email || !position || !department || !phone || !password || !confirmPassword) {
+        showNotification('Пожалуйста, заполните все поля', 'error');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        showNotification('Пароли не совпадают', 'error');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showNotification('Пароль должен содержать минимум 6 символов', 'error');
+        return;
+    }
+    
+    if (!agreement) {
+        showNotification('Необходимо согласиться с политикой конфиденциальности', 'error');
+        return;
+    }
+    
+    if (!email.includes('@soda-chlorate.ru')) {
+        showNotification('Используйте корпоративный email (@soda-chlorate.ru)', 'error');
+        return;
+    }
+    
+    // Check if user already exists
+    const employees = typeof EMPLOYEES_DATABASE !== 'undefined' ? EMPLOYEES_DATABASE : [];
+    const existingUser = employees.find(emp => emp.email === email);
+    
+    if (existingUser) {
+        showNotification('Пользователь с таким email уже зарегистрирован', 'error');
+        return;
+    }
+    
+    // Create new user
+    const newUser = {
+        id: employees.length + 1,
+        name: firstName + ' ' + lastName,
+        position: position,
+        department: department,
+        departmentName: getDepartmentName(department),
+        email: email,
+        phone: phone,
+        status: 'working',
+        statusName: 'На работе',
+        schedule: 'Пн-Пт: 08:00 - 17:00',
+        avatar: firstName.charAt(0) + lastName.charAt(0),
+        hireDate: new Date().toISOString().split('T')[0],
+        salary: 50000
+    };
+    
+    // In a real app, this would be saved to a database
+    // For demo purposes, we'll save to localStorage
+    const newEmployees = [...employees, newUser];
+    localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
+    
+    showNotification('Регистрация успешна! Добро пожаловать в команду!', 'success');
+    hideAuthModal();
+    
+    // Auto-login after registration
+    const userData = {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        position: newUser.position,
+        department: newUser.department,
+        departmentName: newUser.departmentName,
+        avatar: newUser.avatar
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(userData));
+    showMainApp(userData);
+}
+
+function handleLogout() {
+    localStorage.removeItem('currentUser');
+    showNotification('Вы вышли из системы', 'info');
+    showWelcomeScreen();
+}
+
+function getCurrentUser() {
+    const userData = localStorage.getItem('currentUser');
+    return userData ? JSON.parse(userData) : null;
+}
+
+function getDepartmentName(departmentCode) {
+    const departments = {
+        'production': 'Производство',
+        'laboratory': 'Лаборатория',
+        'quality': 'Контроль качества',
+        'safety': 'Безопасность',
+        'management': 'Управление'
+    };
+    return departments[departmentCode] || 'Неизвестный отдел';
 }

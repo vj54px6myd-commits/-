@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой тест регистрации - Сода-Хлорат</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #1e40af;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background: #1e3a8a;
+        }
+        .notification {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            color: white;
+        }
+        .success { background: #10b981; }
+        .error { background: #ef4444; }
+        .info { background: #3b82f6; }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Простой тест регистрации</h1>
+        <div id="notifications"></div>
+        
+        <form id="testForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">Имя:</label>
+                    <input type="text" id="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Фамилия:</label>
+                    <input type="text" id="lastName" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required placeholder="ваш@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="position">Должность:</label>
+                <input type="text" id="position" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Отдел:</label>
+                <select id="department" required>
+                    <option value="">Выберите отдел</option>
+                    <option value="production">Производство</option>
+                    <option value="laboratory">Лаборатория</option>
+                    <option value="quality">Контроль качества</option>
+                    <option value="safety">Безопасность</option>
+                    <option value="management">Управление</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="shift">Смена:</label>
+                <select id="shift" required>
+                    <option value="">Выберите смену</option>
+                    <option value="morning">Утренняя смена (7:30 - 19:30)</option>
+                    <option value="day">Дневная смена (8:00 - 17:00)</option>
+                    <option value="night">Ночная смена (19:30 - 7:30)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" required placeholder="+7 (495) 123-45-67">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" required placeholder="Минимум 6 символов">
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Подтвердите пароль:</label>
+                <input type="password" id="confirmPassword" required placeholder="Повторите пароль">
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="agreement" required>
+                <label for="agreement">Согласен с политикой конфиденциальности</label>
+            </div>
+            
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function showNotification(message, type = 'info') {
+            const notifications = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notifications.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        function getShiftData(shiftCode) {
+            const shifts = {
+                morning: { name: "Утренняя смена", time: "7:30 - 19:30" },
+                night: { name: "Ночная смена", time: "19:30 - 7:30" },
+                day: { name: "Дневная смена", time: "8:00 - 17:00" }
+            };
+            return shifts[shiftCode] || shifts.day;
+        }
+        
+        function getDepartmentName(departmentCode) {
+            const departments = {
+                'production': 'Производство',
+                'laboratory': 'Лаборатория',
+                'quality': 'Контроль качества',
+                'safety': 'Безопасность',
+                'management': 'Управление'
+            };
+            return departments[departmentCode] || 'Неизвестный отдел';
+        }
+        
+        function getEmployeesData() {
+            const storedEmployees = localStorage.getItem('employeesDatabase');
+            if (storedEmployees) {
+                return JSON.parse(storedEmployees);
+            }
+            return [];
+        }
+        
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            console.log('=== НАЧАЛО РЕГИСТРАЦИИ ===');
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const position = document.getElementById('position').value;
+            const department = document.getElementById('department').value;
+            const shift = document.getElementById('shift').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreement = document.getElementById('agreement').checked;
+            
+            console.log('Данные формы:', { 
+                firstName, lastName, email, position, department, shift, phone, agreement 
+            });
+            
+            // Проверка обязательных полей
+            if (!firstName || !lastName || !email || !position || !department || !shift || !phone || !password || !confirmPassword) {
+                showNotification('Пожалуйста, заполните все поля', 'error');
+                console.log('Ошибка: не все поля заполнены');
+                return;
+            }
+            
+            // Проверка паролей
+            if (password !== confirmPassword) {
+                showNotification('Пароли не совпадают', 'error');
+                console.log('Ошибка: пароли не совпадают');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Пароль должен содержать минимум 6 символов', 'error');
+                console.log('Ошибка: пароль слишком короткий');
+                return;
+            }
+            
+            // Проверка согласия
+            if (!agreement) {
+                showNotification('Необходимо согласиться с политикой конфиденциальности', 'error');
+                console.log('Ошибка: нет согласия');
+                return;
+            }
+            
+            // Проверка email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Введите корректный email адрес', 'error');
+                console.log('Ошибка: некорректный email');
+                return;
+            }
+            
+            // Проверка существующего пользователя
+            const employees = getEmployeesData();
+            const existingUser = employees.find(emp => emp.email === email);
+            
+            if (existingUser) {
+                showNotification('Пользователь с таким email уже зарегистрирован', 'error');
+                console.log('Ошибка: пользователь уже существует');
+                return;
+            }
+            
+            // Создание нового пользователя
+            const shiftData = getShiftData(shift);
+            const newUser = {
+                id: employees.length + 1,
+                name: firstName + ' ' + lastName,
+                position: position,
+                department: department,
+                departmentName: getDepartmentName(department),
+                shift: shift,
+                shiftName: shiftData.name,
+                email: email,
+                phone: phone,
+                status: 'working',
+                statusName: 'На работе',
+                schedule: shiftData.time,
+                avatar: firstName.charAt(0) + lastName.charAt(0),
+                hireDate: new Date().toISOString().split('T')[0],
+                salary: {
+                    baseSalary: 50000,
+                    bonus: 0,
+                    nightShift: 0,
+                    hazardPay: 0,
+                    overtime: 0,
+                    holidayWork: 0,
+                    total: 50000
+                },
+                workHours: {
+                    regular: 160,
+                    night: 0,
+                    overtime: 0,
+                    holiday: 0
+                }
+            };
+            
+            console.log('Создан новый пользователь:', newUser);
+            
+            try {
+                // Сохранение в localStorage
+                const newEmployees = [...employees, newUser];
+                localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
+                console.log('Пользователь сохранен в localStorage');
+                
+                showNotification('Регистрация успешна! Сотрудник добавлен в базу данных.', 'success');
+                
+                // Показ результата
+                document.getElementById('result').innerHTML = `
+                    <h3>Результат регистрации:</h3>
+                    <p><strong>Имя:</strong> ${newUser.name}</p>
+                    <p><strong>Email:</strong> ${newUser.email}</p>
+                    <p><strong>Должность:</strong> ${newUser.position}</p>
+                    <p><strong>Отдел:</strong> ${newUser.departmentName}</p>
+                    <p><strong>Смена:</strong> ${newUser.shiftName}</p>
+                    <p><strong>ID:</strong> ${newUser.id}</p>
+                    <p><strong>Зарплата:</strong> ${newUser.salary.total} ₽</p>
+                `;
+                
+                // Очистка формы
+                document.getElementById('testForm').reset();
+                
+                console.log('=== РЕГИСТРАЦИЯ ЗАВЕРШЕНА УСПЕШНО ===');
+                
+            } catch (error) {
+                console.error('Ошибка при сохранении:', error);
+                showNotification('Ошибка при сохранении данных: ' + error.message, 'error');
+            }
+        });
+        
+        // Показ инструкций при загрузке
+        window.onload = function() {
+            showNotification('Заполните все поля и нажмите "Зарегистрироваться"', 'info');
+        };
+    </script>
+</body>
+</html>

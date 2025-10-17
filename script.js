@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Add notification system
-    function showNotification(message, type = 'info') {
+    window.showNotification = function(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.innerHTML = `
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
     
     // Add search functionality for news
-    function addNewsSearch() {
+    window.addNewsSearch = function() {
         const newsSection = document.getElementById('news');
         const sectionHeader = newsSection.querySelector('.section-header');
         
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addNewsSearch();
     
     // Add export functionality for salary
-    function addSalaryExport() {
+    window.addSalaryExport = function() {
         const salarySection = document.getElementById('salary');
         const sectionHeader = salarySection.querySelector('.section-header');
         
@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addSalaryExport();
     
     // Add theme toggle (bonus feature)
-    function addThemeToggle() {
+    window.addThemeToggle = function() {
         const header = document.querySelector('.header');
         const themeBtn = document.createElement('button');
         themeBtn.className = 'btn btn-secondary';

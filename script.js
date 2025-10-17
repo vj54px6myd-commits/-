@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Simulate some notifications on page load
     setTimeout(() => {
-        showNotification('Добро пожаловать в личный кабинет Soda-Chlorate!', 'success');
+        showNotification('Добро пожаловать в личный кабинет Сода-Хлорат!', 'success');
     }, 1000);
     
     // Add search functionality for news
@@ -658,7 +658,7 @@ function showWelcomeScreen() {
     welcomeScreen.className = 'welcome-screen';
     welcomeScreen.innerHTML = `
         <div class="welcome-content">
-            <h1><i class="fas fa-flask"></i> Soda-Chlorate</h1>
+            <h1><i class="fas fa-flask"></i> Сода-Хлорат</h1>
             <p>Добро пожаловать в личный кабинет сотрудника</p>
             <p>Войдите в систему или зарегистрируйтесь для доступа к персональной информации</p>
             <div class="welcome-buttons">

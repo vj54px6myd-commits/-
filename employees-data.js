@@ -268,6 +268,68 @@ const EMPLOYEES_DATABASE = [
             overtime: 4,
             holiday: 0
         }
+    },
+    {
+        id: 9,
+        name: "Аляутдинов Рашид",
+        position: "Оператор ДПУ",
+        department: "production",
+        departmentName: "Производство",
+        email: "altdnv01@gmail.com",
+        phone: "+7 (495) 123-45-75",
+        status: "working",
+        statusName: "На работе",
+        shift: "morning",
+        shiftName: "Утренняя смена",
+        schedule: "7:30 - 19:30",
+        avatar: "АР",
+        hireDate: "2024-01-01",
+        salary: {
+            baseSalary: 55000,
+            bonus: 5000,
+            nightShift: 0,
+            hazardPay: 8000,
+            overtime: 2000,
+            holidayWork: 1000,
+            total: 71000
+        },
+        workHours: {
+            regular: 160,
+            night: 0,
+            overtime: 6,
+            holiday: 2
+        }
+    },
+    {
+        id: 10,
+        name: "Исмагилова Эльмира",
+        position: "Аппаратчик карбонизации",
+        department: "production",
+        departmentName: "Производство",
+        email: "ismglva1982@gmail.com",
+        phone: "+7 (495) 123-45-76",
+        status: "working",
+        statusName: "На работе",
+        shift: "night",
+        shiftName: "Ночная смена",
+        schedule: "19:30 - 7:30",
+        avatar: "ИЭ",
+        hireDate: "2024-01-01",
+        salary: {
+            baseSalary: 50000,
+            bonus: 3000,
+            nightShift: 10000,
+            hazardPay: 6000,
+            overtime: 1500,
+            holidayWork: 500,
+            total: 71000
+        },
+        workHours: {
+            regular: 160,
+            night: 40,
+            overtime: 5,
+            holiday: 1
+        }
     }
     // Добавьте новых сотрудников здесь, используя следующий шаблон:
     /*

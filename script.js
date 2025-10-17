@@ -547,6 +547,22 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(darkThemeStyle);
 });
 
+// Add employee button
+function setupAddEmployee() {
+    const addBtn = document.getElementById('addEmployeeBtn');
+    if (!addBtn) return;
+    
+    addBtn.addEventListener('click', function() {
+        if (!hasAccess('manager')) {
+            showNotification('У вас нет прав для добавления сотрудников', 'error');
+            return;
+        }
+        
+        // Показать форму добавления сотрудника
+        showNotification('Функция добавления сотрудника будет доступна в следующем обновлении', 'info');
+    });
+}
+
 // Employees Management Functions
 function initializeEmployees() {
     // Получаем данные сотрудников из localStorage или внешнего файла
@@ -756,6 +772,7 @@ function initializeEmployees() {
     setupSearch();
     setupDepartmentFilter();
     setupModalEvents();
+    setupAddEmployee();
     updateStatistics();
     
     // Add keyboard shortcut for employees section
@@ -835,6 +852,9 @@ function showMainApp(user) {
     // Initialize other systems
     initializeEmployees();
     updatePersonalSalary();
+    
+    // Update UI based on access level
+    updateUIForAccessLevel();
 }
 
 function updateUserInfo(user) {
@@ -869,6 +889,12 @@ function setupAuthEventListeners() {
     const loginForm = document.getElementById('loginFormElement');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    // Register form
+    const registerForm = document.getElementById('registerFormElement');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
     }
     
     
@@ -965,7 +991,9 @@ function handleLogin(e) {
         position: user.position,
         department: user.department,
         departmentName: user.departmentName,
-        avatar: user.avatar
+        avatar: user.avatar,
+        accessLevel: user.accessLevel,
+        accessLevelName: user.accessLevelName
     };
     
     // Save user session
@@ -987,6 +1015,7 @@ function handleRegister(e) {
     const position = document.getElementById('regPosition').value;
     const department = document.getElementById('regDepartment').value;
     const shift = document.getElementById('regShift').value;
+    const accessLevel = document.getElementById('regAccessLevel').value;
     const phone = document.getElementById('regPhone').value;
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
@@ -995,7 +1024,7 @@ function handleRegister(e) {
     console.log('Данные формы:', { firstName, lastName, email, position, department, phone, agreement });
     
     // Check if all form elements exist
-    const requiredFields = ['regFirstName', 'regLastName', 'regEmail', 'regPosition', 'regDepartment', 'regShift', 'regPhone', 'regPassword', 'regConfirmPassword'];
+    const requiredFields = ['regFirstName', 'regLastName', 'regEmail', 'regPosition', 'regDepartment', 'regShift', 'regAccessLevel', 'regPhone', 'regPassword', 'regConfirmPassword'];
     const missingFields = requiredFields.filter(fieldId => !document.getElementById(fieldId));
     
     if (missingFields.length > 0) {
@@ -1005,7 +1034,7 @@ function handleRegister(e) {
     }
     
     // Validation
-    if (!firstName || !lastName || !email || !position || !department || !shift || !phone || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !position || !department || !shift || !document.getElementById('regAccessLevel').value || !phone || !password || !confirmPassword) {
         showNotification('Пожалуйста, заполните все поля', 'error');
         return;
     }
@@ -1043,6 +1072,12 @@ function handleRegister(e) {
     
     // Create new user with salary structure
     const shiftData = getShiftData(shift);
+    const accessLevelNames = {
+        'employee': 'Сотрудник',
+        'manager': 'Менеджер',
+        'admin': 'Администратор'
+    };
+    
     const newUser = {
         id: employees.length + 1,
         name: firstName + ' ' + lastName,
@@ -1058,6 +1093,8 @@ function handleRegister(e) {
         schedule: shiftData.time,
         avatar: firstName.charAt(0) + lastName.charAt(0),
         hireDate: new Date().toISOString().split('T')[0],
+        accessLevel: accessLevel,
+        accessLevelName: accessLevelNames[accessLevel] || 'Сотрудник',
         salary: {
             baseSalary: 50000,
             bonus: 0,
@@ -1093,7 +1130,9 @@ function handleRegister(e) {
             position: newUser.position,
             department: newUser.department,
             departmentName: newUser.departmentName,
-            avatar: newUser.avatar
+            avatar: newUser.avatar,
+            accessLevel: newUser.accessLevel,
+            accessLevelName: newUser.accessLevelName
         };
         
         localStorage.setItem('currentUser', JSON.stringify(userData));
@@ -1114,6 +1153,55 @@ function handleLogout() {
 function getCurrentUser() {
     const userData = localStorage.getItem('currentUser');
     return userData ? JSON.parse(userData) : null;
+}
+
+function hasAccess(requiredLevel) {
+    const currentUser = getCurrentUser();
+    if (!currentUser) return false;
+    
+    const accessLevels = {
+        'employee': 1,
+        'manager': 2,
+        'admin': 3
+    };
+    
+    const userLevel = accessLevels[currentUser.accessLevel] || 0;
+    const required = accessLevels[requiredLevel] || 0;
+    
+    return userLevel >= required;
+}
+
+function updateUIForAccessLevel() {
+    const currentUser = getCurrentUser();
+    if (!currentUser) return;
+    
+    // Показать/скрыть кнопку добавления сотрудников
+    const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+    if (addEmployeeBtn) {
+        if (hasAccess('manager')) {
+            addEmployeeBtn.style.display = 'inline-block';
+        } else {
+            addEmployeeBtn.style.display = 'none';
+        }
+    }
+    
+    // Показать уровень доступа в интерфейсе
+    const userInfo = document.querySelector('.user-info');
+    if (userInfo && currentUser.accessLevelName) {
+        const accessLevelSpan = document.createElement('span');
+        accessLevelSpan.className = 'access-level';
+        accessLevelSpan.textContent = currentUser.accessLevelName;
+        accessLevelSpan.style.cssText = `
+            background: ${currentUser.accessLevel === 'admin' ? '#dc2626' : 
+                        currentUser.accessLevel === 'manager' ? '#059669' : '#6b7280'};
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        `;
+        userInfo.appendChild(accessLevelSpan);
+    }
 }
 
 function getDepartmentName(departmentCode) {

@@ -372,8 +372,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Employees Management Functions
 function initializeEmployees() {
-    // Sample employee data
-    const employees = [
+    // Получаем данные сотрудников из внешнего файла или используем встроенные
+    const employees = typeof EMPLOYEES_DATABASE !== 'undefined' ? EMPLOYEES_DATABASE : [
+        // Fallback данные, если внешний файл не загружен
         {
             id: 1,
             name: "Иван Петров",
@@ -386,97 +387,6 @@ function initializeEmployees() {
             statusName: "На работе",
             schedule: "Пн-Пт: 08:00 - 17:00",
             avatar: "ИП"
-        },
-        {
-            id: 2,
-            name: "Мария Сидорова",
-            position: "Лаборант",
-            department: "laboratory",
-            departmentName: "Лаборатория",
-            email: "maria.sidorova@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-68",
-            status: "working",
-            statusName: "На работе",
-            schedule: "Пн-Пт: 09:00 - 18:00",
-            avatar: "МС"
-        },
-        {
-            id: 3,
-            name: "Алексей Козлов",
-            position: "Менеджер по качеству",
-            department: "quality",
-            departmentName: "Контроль качества",
-            email: "alexey.kozlov@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-69",
-            status: "vacation",
-            statusName: "В отпуске",
-            schedule: "Пн-Пт: 08:30 - 17:30",
-            avatar: "АК"
-        },
-        {
-            id: 4,
-            name: "Елена Волкова",
-            position: "Инженер по безопасности",
-            department: "safety",
-            departmentName: "Безопасность",
-            email: "elena.volkova@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-70",
-            status: "working",
-            statusName: "На работе",
-            schedule: "Пн-Пт: 08:00 - 17:00",
-            avatar: "ЕВ"
-        },
-        {
-            id: 5,
-            name: "Дмитрий Новиков",
-            position: "Начальник производства",
-            department: "management",
-            departmentName: "Управление",
-            email: "dmitry.novikov@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-71",
-            status: "sick",
-            statusName: "На больничном",
-            schedule: "Пн-Пт: 09:00 - 18:00",
-            avatar: "ДН"
-        },
-        {
-            id: 6,
-            name: "Анна Смирнова",
-            position: "Химик-аналитик",
-            department: "laboratory",
-            departmentName: "Лаборатория",
-            email: "anna.smirnova@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-72",
-            status: "working",
-            statusName: "На работе",
-            schedule: "Пн-Пт: 08:00 - 17:00",
-            avatar: "АС"
-        },
-        {
-            id: 7,
-            name: "Сергей Морозов",
-            position: "Оператор установки",
-            department: "production",
-            departmentName: "Производство",
-            email: "sergey.morozov@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-73",
-            status: "working",
-            statusName: "На работе",
-            schedule: "Сменный график",
-            avatar: "СМ"
-        },
-        {
-            id: 8,
-            name: "Ольга Лебедева",
-            position: "Контролер качества",
-            department: "quality",
-            departmentName: "Контроль качества",
-            email: "olga.lebedeva@soda-chlorate.ru",
-            phone: "+7 (495) 123-45-74",
-            status: "vacation",
-            statusName: "В отпуске",
-            schedule: "Пн-Пт: 08:30 - 17:30",
-            avatar: "ОЛ"
         }
     ];
     

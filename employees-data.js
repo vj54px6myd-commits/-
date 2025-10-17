@@ -19,12 +19,18 @@ const EMPLOYEES_DATABASE = [
         accessLevelName: "Сотрудник",
         salary: {
             baseSalary: 55000,
-            bonus: 5000,
-            nightShift: 0,
-            hazardPay: 8000,
-            overtime: 2000,
-            holidayWork: 1000,
-            total: 71000
+            bonusPercent: 9, // 9% от базовой зарплаты
+            hazardPay: 8000, // Фиксированная надбавка за вредность
+            nightShiftMultiplier: 1.2, // +20% за ночную смену
+            morningShiftMultiplier: 1.1, // +10% за утреннюю смену
+            hazardMultiplier: 1.15, // +15% за вредные условия
+            overtimeMultiplier: 1.5, // +50% за переработки
+            holidayMultiplier: 2.0, // +100% за работу в праздники
+            bonus: 0, // Рассчитывается автоматически
+            nightShift: 0, // Рассчитывается автоматически
+            overtime: 0, // Рассчитывается автоматически
+            holidayWork: 0, // Рассчитывается автоматически
+            total: 0 // Рассчитывается автоматически
         },
         workHours: {
             regular: 160,
@@ -52,12 +58,18 @@ const EMPLOYEES_DATABASE = [
         accessLevelName: "Менеджер",
         salary: {
             baseSalary: 52000,
-            bonus: 3000,
-            nightShift: 12000,
-            hazardPay: 7000,
-            overtime: 1500,
-            holidayWork: 800,
-            total: 76300
+            bonusPercent: 6, // 6% от базовой зарплаты
+            hazardPay: 7000, // Фиксированная надбавка за вредность
+            nightShiftMultiplier: 1.25, // +25% за ночную смену
+            morningShiftMultiplier: 1.1, // +10% за утреннюю смену
+            hazardMultiplier: 1.15, // +15% за вредные условия
+            overtimeMultiplier: 1.5, // +50% за переработки
+            holidayMultiplier: 2.0, // +100% за работу в праздники
+            bonus: 0, // Рассчитывается автоматически
+            nightShift: 0, // Рассчитывается автоматически
+            overtime: 0, // Рассчитывается автоматически
+            holidayWork: 0, // Рассчитывается автоматически
+            total: 0 // Рассчитывается автоматически
         },
         workHours: {
             regular: 160,
@@ -85,12 +97,18 @@ const EMPLOYEES_DATABASE = [
         accessLevelName: "Администратор",
         salary: {
             baseSalary: 100000,
-            bonus: 20000,
-            nightShift: 0,
-            hazardPay: 0,
-            overtime: 5000,
-            holidayWork: 3000,
-            total: 128000
+            bonusPercent: 20, // 20% от базовой зарплаты
+            hazardPay: 0, // Нет надбавки за вредность
+            nightShiftMultiplier: 1.2, // +20% за ночную смену
+            morningShiftMultiplier: 1.1, // +10% за утреннюю смену
+            hazardMultiplier: 1.0, // Нет надбавки за вредные условия
+            overtimeMultiplier: 1.5, // +50% за переработки
+            holidayMultiplier: 2.0, // +100% за работу в праздники
+            bonus: 0, // Рассчитывается автоматически
+            nightShift: 0, // Рассчитывается автоматически
+            overtime: 0, // Рассчитывается автоматически
+            holidayWork: 0, // Рассчитывается автоматически
+            total: 0 // Рассчитывается автоматически
         },
         workHours: {
             regular: 160,

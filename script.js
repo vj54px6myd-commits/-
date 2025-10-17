@@ -1188,6 +1188,12 @@ function updateUIForAccessLevel() {
     // Показать уровень доступа в интерфейсе
     const userInfo = document.querySelector('.user-info');
     if (userInfo && currentUser.accessLevelName) {
+        // Удаляем старый бейдж, если есть
+        const oldBadge = userInfo.querySelector('.access-level');
+        if (oldBadge) {
+            oldBadge.remove();
+        }
+        
         const accessLevelSpan = document.createElement('span');
         accessLevelSpan.className = 'access-level';
         accessLevelSpan.textContent = currentUser.accessLevelName;
@@ -1201,6 +1207,95 @@ function updateUIForAccessLevel() {
             margin-left: 8px;
         `;
         userInfo.appendChild(accessLevelSpan);
+    }
+}
+
+// Функция для автоматического добавления сотрудников
+function addEmployeeAutomatically(employeeData) {
+    try {
+        // Валидация обязательных полей
+        const requiredFields = ['name', 'email', 'position', 'department', 'shift', 'accessLevel'];
+        for (const field of requiredFields) {
+            if (!employeeData[field]) {
+                throw new Error(`Отсутствует обязательное поле: ${field}`);
+            }
+        }
+        
+        // Получаем текущую базу данных
+        const employees = getEmployeesData();
+        
+        // Проверяем уникальность email
+        const existingEmployee = employees.find(emp => emp.email === employeeData.email);
+        if (existingEmployee) {
+            throw new Error(`Сотрудник с email ${employeeData.email} уже существует`);
+        }
+        
+        // Получаем данные смены
+        const shiftData = getShiftData(employeeData.shift);
+        
+        // Создаем нового сотрудника
+        const newEmployee = {
+            id: employees.length + 1,
+            name: employeeData.name,
+            position: employeeData.position,
+            department: employeeData.department,
+            departmentName: getDepartmentName(employeeData.department),
+            shift: employeeData.shift,
+            shiftName: shiftData.name,
+            email: employeeData.email,
+            phone: employeeData.phone || '+7 (495) 000-00-00',
+            status: employeeData.status || 'working',
+            statusName: employeeData.statusName || 'На работе',
+            schedule: shiftData.time,
+            avatar: employeeData.name.split(' ').map(n => n[0]).join(''),
+            hireDate: employeeData.hireDate || new Date().toISOString().split('T')[0],
+            accessLevel: employeeData.accessLevel,
+            accessLevelName: employeeData.accessLevel === 'admin' ? 'Администратор' : 
+                           employeeData.accessLevel === 'manager' ? 'Менеджер' : 'Сотрудник',
+            salary: {
+                baseSalary: employeeData.salary?.baseSalary || 50000,
+                bonusPercent: employeeData.salary?.bonusPercent || 0,
+                hazardPay: employeeData.salary?.hazardPay || 0,
+                nightShiftMultiplier: employeeData.salary?.nightShiftMultiplier || 1.2,
+                morningShiftMultiplier: employeeData.salary?.morningShiftMultiplier || 1.1,
+                hazardMultiplier: employeeData.salary?.hazardMultiplier || 1.15,
+                overtimeMultiplier: employeeData.salary?.overtimeMultiplier || 1.5,
+                holidayMultiplier: employeeData.salary?.holidayMultiplier || 2.0,
+                bonus: 0, // Рассчитывается автоматически
+                nightShift: 0, // Рассчитывается автоматически
+                overtime: 0, // Рассчитывается автоматически
+                holidayWork: 0, // Рассчитывается автоматически
+                total: 0 // Рассчитывается автоматически
+            },
+            workHours: {
+                regular: 160,
+                night: 0,
+                overtime: 0,
+                holiday: 0
+            }
+        };
+        
+        // Добавляем в базу данных
+        const newEmployees = [...employees, newEmployee];
+        localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
+        
+        // Обновляем отображение, если мы на странице сотрудников
+        if (typeof initializeEmployees === 'function') {
+            initializeEmployees();
+        }
+        
+        return {
+            success: true,
+            message: `Сотрудник ${newEmployee.name} успешно добавлен`,
+            employee: newEmployee
+        };
+        
+    } catch (error) {
+        return {
+            success: false,
+            message: `Ошибка при добавлении сотрудника: ${error.message}`,
+            employee: null
+        };
     }
 }
 
@@ -1342,31 +1437,44 @@ function formatCurrency(amount) {
 
 // Calculate salary components based on work hours and rates
 function calculateSalaryComponents(employee) {
-    const rates = {
-        baseHourly: employee.salary.baseSalary / 160, // Base hourly rate
-        nightMultiplier: 1.2, // 20% extra for night work
-        hazardMultiplier: 1.15, // 15% extra for hazardous work
-        overtimeMultiplier: 1.5, // 50% extra for overtime
-        holidayMultiplier: 2.0 // 100% extra for holiday work
-    };
+    // Получаем индивидуальные настройки зарплаты
+    const salaryConfig = employee.salary || {};
+    const baseSalary = salaryConfig.baseSalary || 50000;
     
-    // Calculate shift-specific adjustments
+    // Индивидуальные коэффициенты (если не указаны, используем стандартные)
+    const nightMultiplier = salaryConfig.nightShiftMultiplier || 1.2;
+    const morningMultiplier = salaryConfig.morningShiftMultiplier || 1.1;
+    const hazardMultiplier = salaryConfig.hazardMultiplier || 1.15;
+    const overtimeMultiplier = salaryConfig.overtimeMultiplier || 1.5;
+    const holidayMultiplier = salaryConfig.holidayMultiplier || 2.0;
+    
+    const baseHourly = baseSalary / 160; // Базовая почасовая ставка
+    
+    // Рассчитываем премию как процент от базовой зарплаты
+    const bonusPercent = salaryConfig.bonusPercent || 0;
+    const bonus = Math.round(baseSalary * (bonusPercent / 100));
+    
+    // Рассчитываем надбавки за смены
     let shiftAdjustment = 0;
     if (employee.shift === 'night') {
-        // Night shift gets 20% extra for all regular hours
-        shiftAdjustment = Math.round(employee.workHours.regular * rates.baseHourly * 0.2);
+        shiftAdjustment = Math.round(employee.workHours.regular * baseHourly * (nightMultiplier - 1));
     } else if (employee.shift === 'morning') {
-        // Morning shift gets 10% extra for all regular hours
-        shiftAdjustment = Math.round(employee.workHours.regular * rates.baseHourly * 0.1);
+        shiftAdjustment = Math.round(employee.workHours.regular * baseHourly * (morningMultiplier - 1));
     }
     
+    // Рассчитываем остальные компоненты
+    const nightShift = Math.round(employee.workHours.night * baseHourly * (nightMultiplier - 1)) + shiftAdjustment;
+    const hazardPay = Math.round(employee.workHours.regular * baseHourly * (hazardMultiplier - 1)) + (salaryConfig.hazardPay || 0);
+    const overtime = Math.round(employee.workHours.overtime * baseHourly * (overtimeMultiplier - 1));
+    const holidayWork = Math.round(employee.workHours.holiday * baseHourly * (holidayMultiplier - 1));
+    
     const calculated = {
-        baseSalary: employee.salary.baseSalary,
-        bonus: employee.salary.bonus,
-        nightShift: Math.round(employee.workHours.night * rates.baseHourly * (rates.nightMultiplier - 1)) + shiftAdjustment,
-        hazardPay: Math.round(employee.workHours.regular * rates.baseHourly * (rates.hazardMultiplier - 1)),
-        overtime: Math.round(employee.workHours.overtime * rates.baseHourly * (rates.overtimeMultiplier - 1)),
-        holidayWork: Math.round(employee.workHours.holiday * rates.baseHourly * (rates.holidayMultiplier - 1))
+        baseSalary: baseSalary,
+        bonus: bonus,
+        nightShift: nightShift,
+        hazardPay: hazardPay,
+        overtime: overtime,
+        holidayWork: holidayWork
     };
     
     calculated.total = calculated.baseSalary + calculated.bonus + calculated.nightShift + 

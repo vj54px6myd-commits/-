@@ -40,6 +40,10 @@
                     <i class="fas fa-newspaper"></i>
                     <span>Новости</span>
                 </li>
+                <li class="nav-item" data-section="employees">
+                    <i class="fas fa-users"></i>
+                    <span>Сотрудники</span>
+                </li>
             </ul>
         </nav>
 
@@ -222,6 +226,93 @@
                             <span class="tag production">Производство</span>
                         </div>
                     </article>
+                </div>
+            </section>
+
+            <!-- Employees Section -->
+            <section id="employees" class="content-section">
+                <div class="section-header">
+                    <h2>Список сотрудников</h2>
+                    <div class="employees-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="employeeSearch" placeholder="Поиск сотрудников...">
+                        </div>
+                        <select id="departmentFilter" class="filter-select">
+                            <option value="">Все отделы</option>
+                            <option value="production">Производство</option>
+                            <option value="laboratory">Лаборатория</option>
+                            <option value="quality">Контроль качества</option>
+                            <option value="safety">Безопасность</option>
+                            <option value="management">Управление</option>
+                        </select>
+                        <button class="btn btn-primary" id="addEmployeeBtn">
+                            <i class="fas fa-plus"></i>
+                            Добавить сотрудника
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="employees-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">Всего сотрудников</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">142</div>
+                        <div class="stat-label">На работе</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">В отпуске</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">На больничном</div>
+                    </div>
+                </div>
+
+                <div class="employees-grid" id="employeesGrid">
+                    <!-- Employee cards will be populated by JavaScript -->
+                </div>
+
+                <!-- Employee Modal -->
+                <div id="employeeModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="modalTitle">Информация о сотруднике</h3>
+                            <span class="close">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="employee-details">
+                                <div class="employee-photo">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="employee-info">
+                                    <h4 id="employeeName">Иван Петров</h4>
+                                    <p id="employeePosition">Инженер-химик</p>
+                                    <p id="employeeDepartment">Производство</p>
+                                    <p id="employeeEmail">ivan.petrov@soda-chlorate.ru</p>
+                                    <p id="employeePhone">+7 (495) 123-45-67</p>
+                                </div>
+                            </div>
+                            <div class="employee-schedule">
+                                <h5>Расписание</h5>
+                                <div class="schedule-info">
+                                    <span>Пн-Пт: 08:00 - 17:00</span>
+                                    <span>Сб-Вс: Выходной</span>
+                                </div>
+                            </div>
+                            <div class="employee-status">
+                                <h5>Статус</h5>
+                                <span class="status-badge" id="employeeStatus">На работе</span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="editEmployeeBtn">Редактировать</button>
+                            <button class="btn btn-primary" id="contactEmployeeBtn">Связаться</button>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>

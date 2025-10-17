@@ -705,7 +705,10 @@ function setupAuthEventListeners() {
     // Register form
     const registerForm = document.getElementById('registerFormElement');
     if (registerForm) {
+        console.log('Форма регистрации найдена, добавляем обработчик');
         registerForm.addEventListener('submit', handleRegister);
+    } else {
+        console.error('Форма регистрации не найдена!');
     }
     
     // Close modal
@@ -815,6 +818,8 @@ function handleLogin(e) {
 function handleRegister(e) {
     e.preventDefault();
     
+    console.log('Начало регистрации...');
+    
     const firstName = document.getElementById('regFirstName').value;
     const lastName = document.getElementById('regLastName').value;
     const email = document.getElementById('regEmail').value;
@@ -824,6 +829,18 @@ function handleRegister(e) {
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
     const agreement = document.getElementById('regAgreement').checked;
+    
+    console.log('Данные формы:', { firstName, lastName, email, position, department, phone, agreement });
+    
+    // Check if all form elements exist
+    const requiredFields = ['regFirstName', 'regLastName', 'regEmail', 'regPosition', 'regDepartment', 'regPhone', 'regPassword', 'regConfirmPassword'];
+    const missingFields = requiredFields.filter(fieldId => !document.getElementById(fieldId));
+    
+    if (missingFields.length > 0) {
+        console.error('Отсутствуют поля формы:', missingFields);
+        showNotification('Ошибка формы. Обновите страницу и попробуйте снова.', 'error');
+        return;
+    }
     
     // Validation
     if (!firstName || !lastName || !email || !position || !department || !phone || !password || !confirmPassword) {
@@ -852,7 +869,7 @@ function handleRegister(e) {
     }
     
     // Check if user already exists
-    const employees = typeof EMPLOYEES_DATABASE !== 'undefined' ? EMPLOYEES_DATABASE : [];
+    const employees = getEmployeesData();
     const existingUser = employees.find(emp => emp.email === email);
     
     if (existingUser) {
@@ -893,25 +910,32 @@ function handleRegister(e) {
     
     // In a real app, this would be saved to a database
     // For demo purposes, we'll save to localStorage
-    const newEmployees = [...employees, newUser];
-    localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
-    
-    showNotification('Регистрация успешна! Добро пожаловать в команду!', 'success');
-    hideAuthModal();
-    
-    // Auto-login after registration
-    const userData = {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        position: newUser.position,
-        department: newUser.department,
-        departmentName: newUser.departmentName,
-        avatar: newUser.avatar
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-    showMainApp(userData);
+    try {
+        const newEmployees = [...employees, newUser];
+        localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
+        console.log('Сотрудник сохранен в localStorage:', newUser);
+        
+        showNotification('Регистрация успешна! Добро пожаловать в команду!', 'success');
+        hideAuthModal();
+        
+        // Auto-login after registration
+        const userData = {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            position: newUser.position,
+            department: newUser.department,
+            departmentName: newUser.departmentName,
+            avatar: newUser.avatar
+        };
+        
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        console.log('Пользователь авторизован:', userData);
+        showMainApp(userData);
+    } catch (error) {
+        console.error('Ошибка при сохранении сотрудника:', error);
+        showNotification('Ошибка при сохранении данных. Попробуйте еще раз.', 'error');
+    }
 }
 
 function handleLogout() {

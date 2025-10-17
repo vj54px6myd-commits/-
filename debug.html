@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика регистрации - Soda-Chlorate</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-info { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        button { padding: 10px 20px; margin: 5px; background: #1e40af; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Диагностика системы регистрации</h1>
+    
+    <div id="debugInfo" class="debug-info">
+        <h3>Проверка элементов:</h3>
+        <div id="elementCheck"></div>
+    </div>
+    
+    <div id="testResults" class="debug-info">
+        <h3>Результаты тестов:</h3>
+        <div id="testOutput"></div>
+    </div>
+    
+    <button onclick="runDiagnostics()">Запустить диагностику</button>
+    <button onclick="testRegistration()">Тест регистрации</button>
+    <button onclick="clearData()">Очистить данные</button>
+    
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('testOutput');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            output.appendChild(div);
+            console.log(message);
+        }
+        
+        function runDiagnostics() {
+            log('=== ДИАГНОСТИКА СИСТЕМЫ РЕГИСТРАЦИИ ===');
+            
+            // Check if main elements exist
+            const elements = [
+                'authModal',
+                'registerFormElement',
+                'regFirstName',
+                'regLastName',
+                'regEmail',
+                'regPosition',
+                'regDepartment',
+                'regPhone',
+                'regPassword',
+                'regConfirmPassword',
+                'regAgreement'
+            ];
+            
+            const elementCheck = document.getElementById('elementCheck');
+            elementCheck.innerHTML = '';
+            
+            elements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                const status = element ? '✅' : '❌';
+                const div = document.createElement('div');
+                div.textContent = `${status} ${elementId}`;
+                elementCheck.appendChild(div);
+                
+                if (!element) {
+                    log(`ОШИБКА: Элемент ${elementId} не найден!`, 'error');
+                }
+            });
+            
+            // Check localStorage
+            try {
+                const employees = localStorage.getItem('employeesDatabase');
+                if (employees) {
+                    const parsed = JSON.parse(employees);
+                    log(`✅ База сотрудников в localStorage: ${parsed.length} записей`, 'success');
+                } else {
+                    log('⚠️ База сотрудников в localStorage пуста', 'error');
+                }
+            } catch (error) {
+                log(`❌ Ошибка чтения localStorage: ${error.message}`, 'error');
+            }
+            
+            // Check if functions exist
+            const functions = ['handleRegister', 'showNotification', 'getDepartmentName'];
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    log(`✅ Функция ${funcName} существует`, 'success');
+                } else {
+                    log(`❌ Функция ${funcName} не найдена!`, 'error');
+                }
+            });
+        }
+        
+        function testRegistration() {
+            log('=== ТЕСТ РЕГИСТРАЦИИ ===');
+            
+            // Simulate form data
+            const testData = {
+                firstName: 'Тест',
+                lastName: 'Тестов',
+                email: 'test.testov@soda-chlorate.ru',
+                position: 'Тестировщик',
+                department: 'quality',
+                phone: '+7 (495) 123-45-99',
+                password: 'password123',
+                confirmPassword: 'password123',
+                agreement: true
+            };
+            
+            log('Тестовые данные: ' + JSON.stringify(testData));
+            
+            // Check if handleRegister function exists and call it
+            if (typeof handleRegister === 'function') {
+                try {
+                    // Create a mock event
+                    const mockEvent = {
+                        preventDefault: () => log('preventDefault вызван'),
+                        target: document.createElement('form')
+                    };
+                    
+                    // Set form values
+                    Object.keys(testData).forEach(key => {
+                        const element = document.getElementById('reg' + key.charAt(0).toUpperCase() + key.slice(1));
+                        if (element) {
+                            if (element.type === 'checkbox') {
+                                element.checked = testData[key];
+                            } else {
+                                element.value = testData[key];
+                            }
+                            log(`Установлено значение для ${key}: ${testData[key]}`);
+                        } else {
+                            log(`❌ Элемент для ${key} не найден!`, 'error');
+                        }
+                    });
+                    
+                    // Call the function
+                    handleRegister(mockEvent);
+                    log('✅ Функция handleRegister вызвана успешно', 'success');
+                    
+                } catch (error) {
+                    log(`❌ Ошибка при вызове handleRegister: ${error.message}`, 'error');
+                }
+            } else {
+                log('❌ Функция handleRegister не найдена!', 'error');
+            }
+        }
+        
+        function clearData() {
+            localStorage.removeItem('employeesDatabase');
+            localStorage.removeItem('currentUser');
+            log('✅ Данные очищены', 'success');
+        }
+        
+        // Auto-run diagnostics on load
+        window.onload = function() {
+            log('Страница загружена, запускаем диагностику...');
+            setTimeout(runDiagnostics, 1000);
+        };
+    </script>
+</body>
+</html>

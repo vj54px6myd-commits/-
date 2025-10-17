@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест регистрации - Soda-Chlorate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #1e40af;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1e3a8a;
+        }
+        .notification {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            color: white;
+        }
+        .success { background: #10b981; }
+        .error { background: #ef4444; }
+        .info { background: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Тест регистрации сотрудника</h1>
+        <div id="notifications"></div>
+        
+        <form id="testRegisterForm">
+            <div class="form-group">
+                <label for="firstName">Имя:</label>
+                <input type="text" id="firstName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName">Фамилия:</label>
+                <input type="text" id="lastName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="имя.фамилия@soda-chlorate.ru" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="position">Должность:</label>
+                <input type="text" id="position" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Отдел:</label>
+                <select id="department" required>
+                    <option value="">Выберите отдел</option>
+                    <option value="production">Производство</option>
+                    <option value="laboratory">Лаборатория</option>
+                    <option value="quality">Контроль качества</option>
+                    <option value="safety">Безопасность</option>
+                    <option value="management">Управление</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" placeholder="+7 (495) 123-45-67" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Подтвердите пароль:</label>
+                <input type="password" id="confirmPassword" required>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="agreement" required>
+                    Согласен с политикой конфиденциальности
+                </label>
+            </div>
+            
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function showNotification(message, type = 'info') {
+            const notifications = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notifications.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        function getDepartmentName(departmentCode) {
+            const departments = {
+                'production': 'Производство',
+                'laboratory': 'Лаборатория',
+                'quality': 'Контроль качества',
+                'safety': 'Безопасность',
+                'management': 'Управление'
+            };
+            return departments[departmentCode] || 'Неизвестный отдел';
+        }
+        
+        function getEmployeesData() {
+            const storedEmployees = localStorage.getItem('employeesDatabase');
+            if (storedEmployees) {
+                return JSON.parse(storedEmployees);
+            }
+            return [];
+        }
+        
+        document.getElementById('testRegisterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const position = document.getElementById('position').value;
+            const department = document.getElementById('department').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreement = document.getElementById('agreement').checked;
+            
+            console.log('Данные формы:', { firstName, lastName, email, position, department, phone, agreement });
+            
+            // Validation
+            if (!firstName || !lastName || !email || !position || !department || !phone || !password || !confirmPassword) {
+                showNotification('Пожалуйста, заполните все поля', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('Пароли не совпадают', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Пароль должен содержать минимум 6 символов', 'error');
+                return;
+            }
+            
+            if (!agreement) {
+                showNotification('Необходимо согласиться с политикой конфиденциальности', 'error');
+                return;
+            }
+            
+            if (!email.includes('@soda-chlorate.ru')) {
+                showNotification('Используйте корпоративный email (@soda-chlorate.ru)', 'error');
+                return;
+            }
+            
+            // Check if user already exists
+            const employees = getEmployeesData();
+            const existingUser = employees.find(emp => emp.email === email);
+            
+            if (existingUser) {
+                showNotification('Пользователь с таким email уже зарегистрирован', 'error');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: employees.length + 1,
+                name: firstName + ' ' + lastName,
+                position: position,
+                department: department,
+                departmentName: getDepartmentName(department),
+                email: email,
+                phone: phone,
+                status: 'working',
+                statusName: 'На работе',
+                schedule: 'Пн-Пт: 08:00 - 17:00',
+                avatar: firstName.charAt(0) + lastName.charAt(0),
+                hireDate: new Date().toISOString().split('T')[0],
+                salary: {
+                    baseSalary: 50000,
+                    bonus: 0,
+                    nightShift: 0,
+                    hazardPay: 0,
+                    overtime: 0,
+                    holidayWork: 0,
+                    total: 50000
+                },
+                workHours: {
+                    regular: 160,
+                    night: 0,
+                    overtime: 0,
+                    holiday: 0
+                }
+            };
+            
+            try {
+                const newEmployees = [...employees, newUser];
+                localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
+                console.log('Сотрудник сохранен:', newUser);
+                
+                showNotification('Регистрация успешна! Сотрудник добавлен в базу данных.', 'success');
+                
+                // Show result
+                document.getElementById('result').innerHTML = `
+                    <h3>Результат регистрации:</h3>
+                    <p><strong>Имя:</strong> ${newUser.name}</p>
+                    <p><strong>Email:</strong> ${newUser.email}</p>
+                    <p><strong>Должность:</strong> ${newUser.position}</p>
+                    <p><strong>Отдел:</strong> ${newUser.departmentName}</p>
+                    <p><strong>ID:</strong> ${newUser.id}</p>
+                    <p><strong>Зарплата:</strong> ${newUser.salary.total} ₽</p>
+                `;
+                
+                // Clear form
+                document.getElementById('testRegisterForm').reset();
+                
+            } catch (error) {
+                console.error('Ошибка при сохранении:', error);
+                showNotification('Ошибка при сохранении данных: ' + error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

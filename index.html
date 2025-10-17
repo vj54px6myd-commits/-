@@ -36,6 +36,10 @@
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Зарплата</span>
                 </li>
+                <li class="nav-item" data-section="employees">
+                    <i class="fas fa-users"></i>
+                    <span>Сотрудники</span>
+                </li>
                 <li class="nav-item" data-section="news">
                     <i class="fas fa-newspaper"></i>
                     <span>Новости</span>
@@ -148,6 +152,134 @@
                 </div>
             </section>
 
+            <!-- Employees Section -->
+            <section id="employees" class="content-section">
+                <div class="section-header">
+                    <h2>Список сотрудников</h2>
+                    <div class="employees-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="employeeSearch" placeholder="Поиск сотрудников...">
+                        </div>
+                        <div class="filter-dropdown">
+                            <select id="departmentFilter">
+                                <option value="">Все отделы</option>
+                                <option value="production">Производство</option>
+                                <option value="quality">Контроль качества</option>
+                                <option value="logistics">Логистика</option>
+                                <option value="hr">HR</option>
+                                <option value="management">Управление</option>
+                            </select>
+                        </div>
+                        <button class="add-employee-btn" id="addEmployeeBtn">
+                            <i class="fas fa-plus"></i>
+                            Добавить сотрудника
+                        </button>
+                    </div>
+                </div>
+
+                <div class="employees-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalEmployees">0</div>
+                            <div class="stat-label">Всего сотрудников</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="activeEmployees">0</div>
+                            <div class="stat-label">Активных</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="departmentsCount">0</div>
+                            <div class="stat-label">Отделов</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="employees-table-container">
+                    <div class="table-header">
+                        <div class="table-actions">
+                            <button class="action-btn" id="exportBtn" title="Экспорт">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="action-btn" id="refreshBtn" title="Обновить">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="employees-table" id="employeesTable">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="name">
+                                        <span>Имя</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="position">
+                                        <span>Должность</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="department">
+                                        <span>Отдел</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="email">
+                                        <span>Email</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="phone">
+                                        <span>Телефон</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="hire_date">
+                                        <span>Дата приема</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="status">
+                                        <span>Статус</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeesTableBody">
+                                <!-- Данные будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            <span id="paginationInfo">Показано 0 из 0</span>
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" id="prevPage" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="pagination-pages" id="paginationPages">
+                                <!-- Номера страниц будут добавлены через JavaScript -->
+                            </div>
+                            <button class="pagination-btn" id="nextPage" disabled>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- News Section -->
             <section id="news" class="content-section">
                 <div class="section-header">
@@ -219,6 +351,102 @@
         </main>
     </div>
 
+    <!-- Employee Detail Modal -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Информация о сотруднике</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Содержимое будет загружено через JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">Закрыть</button>
+                <button class="btn btn-primary" id="editEmployeeBtn">Редактировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Employee Modal -->
+    <div id="employeeFormModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="formModalTitle">Добавить сотрудника</h2>
+                <button class="modal-close" id="closeFormModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="employeeForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employeeName">Имя *</label>
+                            <input type="text" id="employeeName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeSurname">Фамилия *</label>
+                            <input type="text" id="employeeSurname" name="surname" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employeeEmail">Email *</label>
+                            <input type="email" id="employeeEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeePhone">Телефон</label>
+                            <input type="tel" id="employeePhone" name="phone">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employeePosition">Должность *</label>
+                            <input type="text" id="employeePosition" name="position" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeDepartment">Отдел *</label>
+                            <select id="employeeDepartment" name="department" required>
+                                <option value="">Выберите отдел</option>
+                                <option value="production">Производство</option>
+                                <option value="quality">Контроль качества</option>
+                                <option value="logistics">Логистика</option>
+                                <option value="hr">HR</option>
+                                <option value="management">Управление</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employeeHireDate">Дата приема *</label>
+                            <input type="date" id="employeeHireDate" name="hire_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeSalary">Зарплата</label>
+                            <input type="number" id="employeeSalary" name="salary" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="employeeNotes">Примечания</label>
+                        <textarea id="employeeNotes" name="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelFormBtn">Отмена</button>
+                <button class="btn btn-primary" id="saveEmployeeBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <div class="loading-spinner"></div>
+        <span>Загрузка...</span>
+    </div>
+
     <!-- API Configuration -->
     <script src="config.js"></script>
     
@@ -227,6 +455,12 @@
     
     <!-- Data Manager -->
     <script src="data-manager.js"></script>
+    
+    <!-- Employees Manager -->
+    <script src="employees.js"></script>
+    
+    <!-- Sample Data for Testing -->
+    <script src="sample-data.js"></script>
     
     <!-- API Examples (опционально) -->
     <script src="api-examples.js"></script>

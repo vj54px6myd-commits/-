@@ -193,6 +193,59 @@ class SodaChlorateAPI {
         return await this.request('/auth/me');
     }
 
+    // ===== МЕТОДЫ ДЛЯ РАБОТЫ С СОТРУДНИКАМИ =====
+    
+    // Получить список всех сотрудников
+    async getEmployees(page = 1, limit = 10, search = '', department = '') {
+        const params = new URLSearchParams({
+            page: page,
+            limit: limit
+        });
+        
+        if (search) params.append('search', search);
+        if (department) params.append('department', department);
+        
+        return await this.request(`/employees?${params}`);
+    }
+
+    // Получить информацию о конкретном сотруднике
+    async getEmployee(employeeId) {
+        return await this.request(`/employees/${employeeId}`);
+    }
+
+    // Создать нового сотрудника
+    async createEmployee(data) {
+        return await this.request('/employees', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    // Обновить информацию о сотруднике
+    async updateEmployee(employeeId, data) {
+        return await this.request(`/employees/${employeeId}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
+
+    // Удалить сотрудника
+    async deleteEmployee(employeeId) {
+        return await this.request(`/employees/${employeeId}`, {
+            method: 'DELETE'
+        });
+    }
+
+    // Получить статистику по сотрудникам
+    async getEmployeesStats() {
+        return await this.request('/employees/stats');
+    }
+
+    // Получить отделы
+    async getDepartments() {
+        return await this.request('/departments');
+    }
+
     // ===== МЕТОДЫ ДЛЯ РАБОТЫ С ПРОФИЛЕМ =====
     
     // Обновить профиль сотрудника

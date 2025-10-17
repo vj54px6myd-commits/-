@@ -136,6 +136,88 @@ class DataManager {
         }
     }
 
+    // ===== РАБОТА С СОТРУДНИКАМИ =====
+    
+    async loadEmployees(page = 1, limit = 10, search = '', department = '') {
+        const cacheKey = `employees_${page}_${limit}_${search}_${department}`;
+        
+        const cachedData = this.getFromCache(cacheKey);
+        if (cachedData && this.isOnline) {
+            return cachedData;
+        }
+
+        try {
+            const data = await window.api.getEmployees(page, limit, search, department);
+            this.setCache(cacheKey, data);
+            return data;
+        } catch (error) {
+            if (!this.isOnline && cachedData) {
+                return cachedData;
+            }
+            throw error;
+        }
+    }
+
+    async loadEmployee(employeeId) {
+        const cacheKey = `employee_${employeeId}`;
+        
+        const cachedData = this.getFromCache(cacheKey);
+        if (cachedData && this.isOnline) {
+            return cachedData;
+        }
+
+        try {
+            const data = await window.api.getEmployee(employeeId);
+            this.setCache(cacheKey, data);
+            return data;
+        } catch (error) {
+            if (!this.isOnline && cachedData) {
+                return cachedData;
+            }
+            throw error;
+        }
+    }
+
+    async loadEmployeesStats() {
+        const cacheKey = 'employees_stats';
+        
+        const cachedData = this.getFromCache(cacheKey);
+        if (cachedData && this.isOnline) {
+            return cachedData;
+        }
+
+        try {
+            const data = await window.api.getEmployeesStats();
+            this.setCache(cacheKey, data);
+            return data;
+        } catch (error) {
+            if (!this.isOnline && cachedData) {
+                return cachedData;
+            }
+            throw error;
+        }
+    }
+
+    async loadDepartments() {
+        const cacheKey = 'departments';
+        
+        const cachedData = this.getFromCache(cacheKey);
+        if (cachedData && this.isOnline) {
+            return cachedData;
+        }
+
+        try {
+            const data = await window.api.getDepartments();
+            this.setCache(cacheKey, data);
+            return data;
+        } catch (error) {
+            if (!this.isOnline && cachedData) {
+                return cachedData;
+            }
+            throw error;
+        }
+    }
+
     // ===== РАБОТА С ПРОФИЛЕМ =====
     
     async loadUserProfile() {

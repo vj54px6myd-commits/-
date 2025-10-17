@@ -10,7 +10,19 @@ function initializeApp() {
     setupSchedule();
     setupDateSelector();
     setupAPI();
+    setupEmployees();
     loadInitialData();
+}
+
+// ===== EMPLOYEES SETUP =====
+
+function setupEmployees() {
+    // Инициализация модуля сотрудников
+    if (window.employeesManager) {
+        // Загружаем сотрудников при инициализации
+        window.employeesManager.loadEmployees();
+        window.employeesManager.loadStats();
+    }
 }
 
 // ===== API SETUP =====

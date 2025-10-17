@@ -868,7 +868,7 @@ function handleRegister(e) {
     console.log('Данные формы:', { firstName, lastName, email, position, department, phone, agreement });
     
     // Check if all form elements exist
-    const requiredFields = ['regFirstName', 'regLastName', 'regEmail', 'regPosition', 'regDepartment', 'regPhone', 'regPassword', 'regConfirmPassword'];
+    const requiredFields = ['regFirstName', 'regLastName', 'regEmail', 'regPosition', 'regDepartment', 'regShift', 'regPhone', 'regPassword', 'regConfirmPassword'];
     const missingFields = requiredFields.filter(fieldId => !document.getElementById(fieldId));
     
     if (missingFields.length > 0) {

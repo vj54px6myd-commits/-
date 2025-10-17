@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отладка уровней доступа - Сода-Хлорат</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .debug-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        .warning { color: orange; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            background: #1e40af;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1e3a8a;
+        }
+        .test-account {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Отладка уровней доступа</h1>
+        <button onclick="checkFunctions()">Проверить функции</button>
+        <button onclick="testAccessLevels()">Тест уровней доступа</button>
+        <button onclick="testLogin()">Тест входа</button>
+        <button onclick="clearLog()">Очистить лог</button>
+    </div>
+    
+    <div class="debug-container">
+        <h2>📋 Лог отладки</h2>
+        <div id="debugLog"></div>
+    </div>
+    
+    <div class="debug-container">
+        <h2>🔑 Тестовые аккаунты</h2>
+        <div class="test-account">
+            <h3>👤 Сотрудник</h3>
+            <p><strong>Email:</strong> altdnv01@gmail.com</p>
+            <p><strong>Пароль:</strong> password123</p>
+            <p><strong>Уровень:</strong> Сотрудник</p>
+            <button onclick="loginAs('altdnv01@gmail.com', 'password123')">Войти как сотрудник</button>
+        </div>
+        
+        <div class="test-account">
+            <h3>👨‍💼 Менеджер</h3>
+            <p><strong>Email:</strong> ismglva1982@gmail.com</p>
+            <p><strong>Пароль:</strong> password123</p>
+            <p><strong>Уровень:</strong> Менеджер</p>
+            <button onclick="loginAs('ismglva1982@gmail.com', 'password123')">Войти как менеджер</button>
+        </div>
+        
+        <div class="test-account">
+            <h3>👑 Администратор</h3>
+            <p><strong>Email:</strong> admin@soda-chlorate.ru</p>
+            <p><strong>Пароль:</strong> password123</p>
+            <p><strong>Уровень:</strong> Администратор</p>
+            <button onclick="loginAs('admin@soda-chlorate.ru', 'password123')">Войти как администратор</button>
+        </div>
+    </div>
+    
+    <div class="debug-container">
+        <h2>🔧 Проверка элементов</h2>
+        <div id="elementCheck"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            debugLog.appendChild(logEntry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+        
+        function checkFunctions() {
+            log('=== ПРОВЕРКА ФУНКЦИЙ ===', 'info');
+            
+            const functions = [
+                'getCurrentUser',
+                'hasAccess',
+                'updateUIForAccessLevel',
+                'getShiftData',
+                'getDepartmentName', 
+                'getEmployeesData',
+                'showMainApp',
+                'hideAuthModal',
+                'showNotification'
+            ];
+            
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    log(`✅ ${funcName} - найдена`, 'success');
+                } else {
+                    log(`❌ ${funcName} - НЕ НАЙДЕНА`, 'error');
+                }
+            });
+            
+            // Проверка глобальных переменных
+            log('=== ПРОВЕРКА ПЕРЕМЕННЫХ ===', 'info');
+            if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+                log('✅ EMPLOYEES_DATABASE - найдена', 'success');
+                log(`Количество сотрудников: ${EMPLOYEES_DATABASE.length}`, 'info');
+                EMPLOYEES_DATABASE.forEach(emp => {
+                    log(`- ${emp.name} (${emp.email}) - ${emp.accessLevelName}`, 'info');
+                });
+            } else {
+                log('❌ EMPLOYEES_DATABASE - НЕ НАЙДЕНА', 'error');
+            }
+        }
+        
+        function testAccessLevels() {
+            log('=== ТЕСТ УРОВНЕЙ ДОСТУПА ===', 'info');
+            
+            if (typeof hasAccess !== 'function') {
+                log('hasAccess не найдена!', 'error');
+                return;
+            }
+            
+            // Тестируем без пользователя
+            log('Тест без пользователя:', 'info');
+            log(`hasAccess('employee'): ${hasAccess('employee')}`, 'info');
+            log(`hasAccess('manager'): ${hasAccess('manager')}`, 'info');
+            log(`hasAccess('admin'): ${hasAccess('admin')}`, 'info');
+            
+            // Тестируем с тестовым пользователем
+            const testUser = {
+                accessLevel: 'manager'
+            };
+            localStorage.setItem('currentUser', JSON.stringify(testUser));
+            
+            log('Тест с менеджером:', 'info');
+            log(`hasAccess('employee'): ${hasAccess('employee')}`, 'info');
+            log(`hasAccess('manager'): ${hasAccess('manager')}`, 'info');
+            log(`hasAccess('admin'): ${hasAccess('admin')}`, 'info');
+            
+            localStorage.removeItem('currentUser');
+        }
+        
+        function testLogin() {
+            log('=== ТЕСТ ВХОДА ===', 'info');
+            
+            if (typeof getEmployeesData !== 'function') {
+                log('getEmployeesData не найдена!', 'error');
+                return;
+            }
+            
+            const employees = getEmployeesData();
+            log(`Найдено сотрудников: ${employees.length}`, 'info');
+            
+            employees.forEach(emp => {
+                log(`- ${emp.name} (${emp.email}) - ${emp.accessLevelName}`, 'info');
+            });
+        }
+        
+        function loginAs(email, password) {
+            log(`=== ВХОД КАК ${email} ===`, 'info');
+            
+            if (typeof getEmployeesData !== 'function') {
+                log('getEmployeesData не найдена!', 'error');
+                return;
+            }
+            
+            const employees = getEmployeesData();
+            const user = employees.find(emp => emp.email === email);
+            
+            if (!user) {
+                log(`Пользователь ${email} не найден!`, 'error');
+                return;
+            }
+            
+            if (password !== 'password123') {
+                log('Неверный пароль!', 'error');
+                return;
+            }
+            
+            const userData = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                position: user.position,
+                department: user.department,
+                departmentName: user.departmentName,
+                avatar: user.avatar,
+                accessLevel: user.accessLevel,
+                accessLevelName: user.accessLevelName
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            log(`Вход успешен! Пользователь: ${user.name} (${user.accessLevelName})`, 'success');
+            
+            // Проверяем права доступа
+            if (typeof hasAccess === 'function') {
+                log(`Права доступа:`, 'info');
+                log(`- employee: ${hasAccess('employee')}`, 'info');
+                log(`- manager: ${hasAccess('manager')}`, 'info');
+                log(`- admin: ${hasAccess('admin')}`, 'info');
+            }
+            
+            // Обновляем UI
+            if (typeof updateUIForAccessLevel === 'function') {
+                updateUIForAccessLevel();
+                log('UI обновлен для уровня доступа', 'success');
+            }
+        }
+        
+        function checkElements() {
+            log('=== ПРОВЕРКА ЭЛЕМЕНТОВ ===', 'info');
+            
+            const elements = [
+                'addEmployeeBtn',
+                'employeeSearch',
+                'departmentFilter',
+                'loginFormElement',
+                'registerFormElement',
+                'regAccessLevel'
+            ];
+            
+            elements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    log(`✅ ${elementId} - найден`, 'success');
+                } else {
+                    log(`❌ ${elementId} - НЕ НАЙДЕН`, 'error');
+                }
+            });
+        }
+        
+        // Загружаем основные скрипты
+        function loadScripts() {
+            log('Загрузка скриптов...', 'info');
+            
+            // Загружаем employees-data.js
+            const script1 = document.createElement('script');
+            script1.src = 'employees-data.js';
+            script1.onload = () => log('employees-data.js загружен', 'success');
+            script1.onerror = () => log('Ошибка загрузки employees-data.js', 'error');
+            document.head.appendChild(script1);
+            
+            // Загружаем script.js
+            const script2 = document.createElement('script');
+            script2.src = 'script.js';
+            script2.onload = () => {
+                log('script.js загружен', 'success');
+                checkFunctions();
+                checkElements();
+            };
+            script2.onerror = () => log('Ошибка загрузки script.js', 'error');
+            document.head.appendChild(script2);
+        }
+        
+        // Запускаем при загрузке
+        window.onload = function() {
+            log('Страница загружена', 'info');
+            loadScripts();
+        };
+    </script>
+</body>
+</html>

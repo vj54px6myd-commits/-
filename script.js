@@ -1154,12 +1154,15 @@ function initializeCalculator() {
 function handleSalaryCalculation(e) {
     e.preventDefault();
     
+    const salaryType = document.getElementById('calcSalaryType').value;
     const formData = {
         employeeName: document.getElementById('calcEmployeeName').value,
         position: document.getElementById('calcPosition').value,
         department: document.getElementById('calcDepartment').value,
         employeeNumber: document.getElementById('calcEmployeeNumber').value,
-        baseSalary: parseFloat(document.getElementById('calcBaseSalary').value) || 0,
+        salaryType: salaryType,
+        baseSalary: salaryType === 'monthly' ? parseFloat(document.getElementById('calcBaseSalary').value) || 0 : 0,
+        hourlyRate: salaryType === 'hourly' ? parseFloat(document.getElementById('calcHourlyRate').value) || 0 : 0,
         shift: document.getElementById('calcShift').value,
         workDays: parseInt(document.getElementById('calcWorkDays').value) || 22,
         hoursPerDay: parseInt(document.getElementById('calcHoursPerDay').value) || 12,
@@ -1180,8 +1183,19 @@ function handleSalaryCalculation(e) {
         notes: document.getElementById('calcNotes').value
     };
     
-    if (!formData.employeeName || !formData.position || !formData.baseSalary || !formData.shift) {
+    // Валидация в зависимости от типа расчета
+    if (!formData.employeeName || !formData.position || !formData.shift) {
         showNotification('Пожалуйста, заполните все обязательные поля', 'error');
+        return;
+    }
+    
+    if (formData.salaryType === 'monthly' && !formData.baseSalary) {
+        showNotification('Пожалуйста, введите оклад', 'error');
+        return;
+    }
+    
+    if (formData.salaryType === 'hourly' && !formData.hourlyRate) {
+        showNotification('Пожалуйста, введите почасовую ставку', 'error');
         return;
     }
     
@@ -1192,12 +1206,25 @@ function handleSalaryCalculation(e) {
 }
 
 function calculateSalaryForCalculator(data) {
-    const baseSalary = data.baseSalary;
-    const totalHours = data.totalHours || 160;
-    const baseHourly = baseSalary / totalHours; // Стоимость часа
+    let baseSalary, baseHourly, totalHours;
     
-    // Премия
-    const bonus = Math.round(baseSalary * (data.bonusPercent / 100));
+    if (data.salaryType === 'hourly') {
+        // Почасовой расчет
+        baseHourly = data.hourlyRate;
+        totalHours = data.totalHours || 160;
+        baseSalary = baseHourly * totalHours; // Оклад рассчитывается от часов
+    } else {
+        // Месячный расчет
+        baseSalary = data.baseSalary;
+        totalHours = data.totalHours || 160;
+        baseHourly = baseSalary / totalHours; // Стоимость часа
+    }
+    
+    // Премия (используем соответствующий процент)
+    const bonusPercent = data.salaryType === 'hourly' ? 
+        (parseFloat(document.getElementById('calcBonusPercentHourly').value) || 0) : 
+        (data.bonusPercent || 0);
+    const bonus = Math.round(baseSalary * (bonusPercent / 100));
     
     // Надбавка за смену
     let shiftPay = 0;
@@ -1251,6 +1278,8 @@ function calculateSalaryForCalculator(data) {
         position: data.position,
         department: data.department,
         employeeNumber: data.employeeNumber,
+        salaryType: data.salaryType,
+        hourlyRate: data.hourlyRate || 0,
         period: `${data.month || 'Январь'} ${data.year || new Date().getFullYear()}`,
         baseSalary: baseSalary,
         bonus: bonus,
@@ -1278,10 +1307,20 @@ function displayCalculationResults(calculation) {
     // Основная информация
     document.getElementById('resultEmployeeName').textContent = calculation.employeeName;
     document.getElementById('resultPosition').textContent = calculation.position;
+    document.getElementById('resultSalaryType').textContent = calculation.salaryType === 'hourly' ? 'Почасовой тариф' : 'Месячный оклад';
     document.getElementById('resultPeriod').textContent = calculation.period;
     
     // Детализация зарплаты
-    document.getElementById('resultBaseSalary').textContent = `${calculation.baseSalary.toLocaleString()} ₽`;
+    if (calculation.salaryType === 'hourly') {
+        document.getElementById('baseSalaryRow').style.display = 'none';
+        document.getElementById('hourlyRateRow').style.display = 'flex';
+        document.getElementById('resultHourlyRate').textContent = `${calculation.hourlyRate.toLocaleString()} ₽/час`;
+        document.getElementById('resultBaseSalary').textContent = `${calculation.baseSalary.toLocaleString()} ₽`;
+    } else {
+        document.getElementById('baseSalaryRow').style.display = 'flex';
+        document.getElementById('hourlyRateRow').style.display = 'none';
+        document.getElementById('resultBaseSalary').textContent = `${calculation.baseSalary.toLocaleString()} ₽`;
+    }
     document.getElementById('resultBonus').textContent = `${calculation.bonus.toLocaleString()} ₽`;
     document.getElementById('resultShiftPay').textContent = `${calculation.shiftPay.toLocaleString()} ₽`;
     document.getElementById('resultHazardPay').textContent = `${calculation.hazardPay.toLocaleString()} ₽`;
@@ -1432,10 +1471,12 @@ function clearCalculatorForm() {
     
     // Установка значений по умолчанию
     document.getElementById('calcBonusPercent').value = '47';
-    document.getElementById('calcRegionCoeff').value = '1.0';
+    document.getElementById('calcRegionCoeff').value = '1.15';
     document.getElementById('calcWorkDays').value = '22';
     document.getElementById('calcHoursPerDay').value = '12';
     document.getElementById('calcYear').value = new Date().getFullYear();
+    document.getElementById('calcSalaryType').value = 'monthly';
+    toggleSalaryInputs();
     
     showNotification('Форма очищена', 'success');
 }
@@ -1454,8 +1495,10 @@ function loadTemplate() {
     document.getElementById('calcWeekendWork').value = '0';
     document.getElementById('calcNightHours').value = '0';
     document.getElementById('calcBonusPercent').value = '47';
-    document.getElementById('calcRegionCoeff').value = '1.0';
+    document.getElementById('calcRegionCoeff').value = '1.15';
+    document.getElementById('calcSalaryType').value = 'monthly';
     document.getElementById('calcNotes').value = 'Стандартный шаблон для оператора ДПУ';
+    toggleSalaryInputs();
     
     showNotification('Шаблон загружен', 'success');
 }
@@ -1533,6 +1576,27 @@ function exportExcel() {
     document.body.removeChild(link);
     
     showNotification('Расчет экспортирован в Excel', 'success');
+}
+
+// Функция переключения между типами расчета зарплаты
+function toggleSalaryInputs() {
+    const salaryType = document.getElementById('calcSalaryType').value;
+    const monthlyInputs = document.getElementById('monthlySalaryInputs');
+    const hourlyInputs = document.getElementById('hourlySalaryInputs');
+    const baseSalaryInput = document.getElementById('calcBaseSalary');
+    const hourlyRateInput = document.getElementById('calcHourlyRate');
+    
+    if (salaryType === 'monthly') {
+        monthlyInputs.style.display = 'block';
+        hourlyInputs.style.display = 'none';
+        baseSalaryInput.required = true;
+        hourlyRateInput.required = false;
+    } else {
+        monthlyInputs.style.display = 'none';
+        hourlyInputs.style.display = 'block';
+        baseSalaryInput.required = false;
+        hourlyRateInput.required = true;
+    }
 }
 
 // Функция для автоматического добавления сотрудников

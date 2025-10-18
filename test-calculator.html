@@ -109,14 +109,46 @@
                             <!-- Зарплатная информация -->
                             <div class="form-section">
                                 <h4><i class="fas fa-money-bill-wave"></i> Зарплатная информация</h4>
+                                
+                                <!-- Тип расчета -->
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="calcBaseSalary">Оклад (руб/месяц):</label>
-                                        <input type="number" id="calcBaseSalary" placeholder="50000" min="0" required>
+                                        <label for="calcSalaryType">Тип расчета:</label>
+                                        <select id="calcSalaryType" onchange="toggleSalaryInputs()">
+                                            <option value="monthly">Месячный оклад</option>
+                                            <option value="hourly">Почасовой тариф</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="calcBonusPercent">Премия (%):</label>
-                                        <input type="number" id="calcBonusPercent" placeholder="47" min="0" max="100" value="47">
+                                        <!-- Пустое поле для выравнивания -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Месячный оклад -->
+                                <div id="monthlySalaryInputs">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="calcBaseSalary">Оклад (руб/месяц):</label>
+                                            <input type="number" id="calcBaseSalary" placeholder="50000" min="0" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="calcBonusPercent">Премия (%):</label>
+                                            <input type="number" id="calcBonusPercent" placeholder="47" min="0" max="100" value="47">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Почасовой тариф -->
+                                <div id="hourlySalaryInputs" style="display: none;">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="calcHourlyRate">Почасовая ставка (руб/час):</label>
+                                            <input type="number" id="calcHourlyRate" placeholder="300" min="0" step="0.01">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="calcBonusPercentHourly">Премия (%):</label>
+                                            <input type="number" id="calcBonusPercentHourly" placeholder="47" min="0" max="100" value="47">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -276,6 +308,10 @@
                                 <span id="resultPosition">-</span>
                             </div>
                             <div class="summary-item">
+                                <span>Тип расчета:</span>
+                                <span id="resultSalaryType">-</span>
+                            </div>
+                            <div class="summary-item">
                                 <span>Период:</span>
                                 <span id="resultPeriod">-</span>
                             </div>
@@ -285,9 +321,13 @@
                             <h4>Детализация зарплаты</h4>
                             <div class="breakdown-section">
                                 <h5>Основная часть</h5>
-                                <div class="breakdown-item">
-                                    <span>Оклад:</span>
+                                <div class="breakdown-item" id="baseSalaryRow">
+                                    <span id="baseSalaryLabel">Оклад:</span>
                                     <span id="resultBaseSalary">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item" id="hourlyRateRow" style="display: none;">
+                                    <span>Почасовая ставка:</span>
+                                    <span id="resultHourlyRate">0 ₽/час</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Премия:</span>

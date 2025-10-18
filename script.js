@@ -1211,19 +1211,22 @@ function calculateSalaryForCalculator(data) {
     // Районный коэффициент
     const regionCoeff = data.regionCoeff || 1.0;
     
-    // Удержания
-    const taxDeduction = data.taxDeduction || 0;
-    const otherDeductions = data.otherDeductions || 0;
-    
     // Итого начислено
     const grossAmount = baseSalary + bonus + shiftPay + hazardPay + qualificationPay + nightPay +
                        overtimePay + holidayPay + weekendPay + nightHoursPay;
     
-    // Применяем районный коэффициент
-    const adjustedAmount = Math.round(grossAmount * regionCoeff);
+    // Применяем районный коэффициент (15%)
+    const adjustedAmount = Math.round(grossAmount * 1.15);
+    
+    // НДФЛ 13% (рассчитывается автоматически)
+    const ndfl = Math.round(adjustedAmount * 0.13);
+    
+    // Другие удержания
+    const otherDeductions = data.otherDeductions || 0;
+    const taxDeduction = data.taxDeduction || 0; // Налоговый вычет
     
     // Итого к выплате (с учетом удержаний)
-    const total = adjustedAmount - taxDeduction - otherDeductions;
+    const total = adjustedAmount - ndfl - taxDeduction - otherDeductions;
     
     return {
         employeeName: data.employeeName,
@@ -1243,8 +1246,10 @@ function calculateSalaryForCalculator(data) {
         nightHoursPay: nightHoursPay,
         regionCoeff: regionCoeff,
         adjustedAmount: adjustedAmount,
+        ndfl: ndfl,
         taxDeduction: taxDeduction,
         otherDeductions: otherDeductions,
+        regionCoeff: 1.15,
         total: Math.max(0, total), // Не может быть отрицательным
         shift: data.shift,
         notes: data.notes
@@ -1268,6 +1273,7 @@ function displayCalculationResults(calculation) {
     document.getElementById('resultHolidayWork').textContent = `${calculation.holidayPay.toLocaleString()} ₽`;
     document.getElementById('resultWeekendWork').textContent = `${calculation.weekendPay.toLocaleString()} ₽`;
     document.getElementById('resultNightHours').textContent = `${calculation.nightHoursPay.toLocaleString()} ₽`;
+    document.getElementById('resultNdfl').textContent = `${calculation.ndfl.toLocaleString()} ₽`;
     document.getElementById('resultTaxDeduction').textContent = `${calculation.taxDeduction.toLocaleString()} ₽`;
     document.getElementById('resultOtherDeductions').textContent = `${calculation.otherDeductions.toLocaleString()} ₽`;
     document.getElementById('resultTotal').textContent = `${calculation.total.toLocaleString()} ₽`;
@@ -1366,6 +1372,7 @@ function printCalculation() {
             <div class="section">
                 <h3>Удержания</h3>
                 <table>
+                    <tr><td>НДФЛ (13%)</td><td>${calculation.ndfl.toLocaleString()} ₽</td></tr>
                     <tr><td>Налоговый вычет</td><td>${calculation.taxDeduction.toLocaleString()} ₽</td></tr>
                     <tr><td>Прочие удержания</td><td>${calculation.otherDeductions.toLocaleString()} ₽</td></tr>
                 </table>
@@ -1394,7 +1401,7 @@ function clearCalculatorForm() {
         'resultEmployeeName', 'resultPosition', 'resultPeriod',
         'resultBaseSalary', 'resultBonus', 'resultShiftPay', 'resultHazardPay',
         'resultQualificationPay', 'resultNightPay', 'resultOvertime', 'resultHolidayWork',
-        'resultWeekendWork', 'resultNightHours', 'resultTaxDeduction',
+        'resultWeekendWork', 'resultNightHours', 'resultNdfl', 'resultTaxDeduction',
         'resultOtherDeductions', 'resultTotal'
     ];
     
@@ -1489,6 +1496,7 @@ function exportExcel() {
         ['Ночные часы:', calculation.nightHoursPay.toLocaleString() + ' ₽'],
         [''],
         ['Удержания:'],
+        ['НДФЛ (13%):', calculation.ndfl.toLocaleString() + ' ₽'],
         ['Налоговый вычет:', calculation.taxDeduction.toLocaleString() + ' ₽'],
         ['Прочие удержания:', calculation.otherDeductions.toLocaleString() + ' ₽'],
         [''],

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест входа бухгалтера - Сода-Хлорат</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #1e40af;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1e3a8a;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .employee-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Тест входа бухгалтера</h1>
+        <p>Проверим, работает ли вход для сотрудника с табельным номером 002</p>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="employeeNumber">Табельный номер:</label>
+                <input type="text" id="employeeNumber" value="002" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" value="accountant123" required>
+            </div>
+            <button type="submit">Войти</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script src="employees-data.js"></script>
+    <script>
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const employeeNumber = document.getElementById('employeeNumber').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            console.log('Попытка входа:', { employeeNumber, password });
+            console.log('База данных сотрудников:', EMPLOYEES_DATABASE);
+            
+            // Ищем сотрудника
+            const employee = EMPLOYEES_DATABASE.find(emp => emp.employeeNumber === employeeNumber);
+            
+            if (!employee) {
+                resultDiv.innerHTML = '<div class="result error">Сотрудник с таким табельным номером не найден</div>';
+                return;
+            }
+            
+            if (password !== employee.password) {
+                resultDiv.innerHTML = '<div class="result error">Неверный пароль</div>';
+                return;
+            }
+            
+            // Успешный вход
+            resultDiv.innerHTML = `
+                <div class="result success">
+                    <h3>Вход успешен!</h3>
+                    <div class="employee-info">
+                        <p><strong>ФИО:</strong> ${employee.name}</p>
+                        <p><strong>Должность:</strong> ${employee.position}</p>
+                        <p><strong>Отдел:</strong> ${employee.departmentName}</p>
+                        <p><strong>Уровень доступа:</strong> ${employee.accessLevelName}</p>
+                        <p><strong>Табельный номер:</strong> ${employee.employeeNumber}</p>
+                        <p><strong>Email:</strong> ${employee.email}</p>
+                        <p><strong>Телефон:</strong> ${employee.phone}</p>
+                        <p><strong>Смена:</strong> ${employee.shiftName}</p>
+                        <p><strong>График:</strong> ${employee.schedule}</p>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

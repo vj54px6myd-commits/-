@@ -1233,7 +1233,7 @@ function calculateSalaryForCalculator(data) {
     }
     
     // Переработки
-    const overtimePay = Math.round(data.overtime * baseHourly * 0.5); // +50% за переработки
+    const overtimePay = Math.round(data.overtime * baseHourly * 1.0); // +100% за переработки (в двойном размере)
     
     // Праздничные дни
     const holidayPay = Math.round(data.holidayWork * baseHourly * 1.0); // +100% за праздники
@@ -1836,7 +1836,7 @@ function calculateSalaryComponents(employee) {
     const bonusPercent = salaryConfig.bonusPercent || 47; // 47% премия по умолчанию
     const nightMultiplier = 1.4; // +40% за ночную смену
     const holidayMultiplier = 2.0; // +100% за праздничные дни
-    const overtimeMultiplier = 1.5; // +50% за переработки (стандартно)
+    const overtimeMultiplier = 2.0; // +100% за переработки (в двойном размере)
     
     const baseHourly = baseSalary / 160; // Базовая почасовая ставка (оклад / 160 часов)
     
@@ -1854,7 +1854,7 @@ function calculateSalaryComponents(employee) {
     // Рассчитываем остальные компоненты
     const nightShift = shiftAdjustment; // Надбавка за ночную смену
     const hazardPay = salaryConfig.hazardPay || 0; // Фиксированная надбавка за вредность
-    const overtime = Math.round(employee.workHours.overtime * baseHourly * (overtimeMultiplier - 1));
+    const overtime = Math.round(employee.workHours.overtime * baseHourly * 1.0); // В двойном размере
     const holidayWork = Math.round(employee.workHours.holiday * baseHourly * (holidayMultiplier - 1));
     
     const calculated = {

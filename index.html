@@ -80,6 +80,10 @@
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Зарплата</span>
                 </li>
+                <li class="nav-item" data-section="calculator" id="calculatorNav" style="display: none;">
+                    <i class="fas fa-calculator"></i>
+                    <span>Калькулятор ЗП</span>
+                </li>
                 <li class="nav-item" data-section="news">
                     <i class="fas fa-newspaper"></i>
                     <span>Новости</span>
@@ -266,6 +270,117 @@
                             <span>Октябрь 2023</span>
                             <span id="octSalary">0 ₽</span>
                             <span class="status paid">Выплачено</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calculator Section -->
+            <section id="calculator" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-calculator"></i> Калькулятор заработной платы</h2>
+                    <p>Расчет зарплаты для сотрудников</p>
+                </div>
+                
+                <div class="calculator-container">
+                    <div class="calculator-form">
+                        <h3>Параметры расчета</h3>
+                        <form id="salaryCalculatorForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="calcEmployeeName">ФИО сотрудника:</label>
+                                    <input type="text" id="calcEmployeeName" placeholder="Введите ФИО сотрудника" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="calcPosition">Должность:</label>
+                                    <input type="text" id="calcPosition" placeholder="Введите должность" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="calcBaseSalary">Оклад (руб/месяц):</label>
+                                    <input type="number" id="calcBaseSalary" placeholder="50000" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="calcShift">Смена:</label>
+                                    <select id="calcShift" required>
+                                        <option value="">Выберите смену</option>
+                                        <option value="morning">Утренняя (7:30-19:30)</option>
+                                        <option value="day">Дневная (8:00-17:00)</option>
+                                        <option value="night">Ночная (19:30-7:30)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="calcHazardPay">Надбавка за вредность (руб):</label>
+                                    <input type="number" id="calcHazardPay" placeholder="0" min="0" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="calcOvertime">Переработки (часы):</label>
+                                    <input type="number" id="calcOvertime" placeholder="0" min="0" value="0">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="calcHolidayWork">Праздничные дни (часы):</label>
+                                    <input type="number" id="calcHolidayWork" placeholder="0" min="0" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="calcBonusPercent">Премия (%):</label>
+                                    <input type="number" id="calcBonusPercent" placeholder="47" min="0" max="100" value="47">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calculator"></i> Рассчитать зарплату
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="calculator-results">
+                        <h3>Результат расчета</h3>
+                        <div class="salary-breakdown" id="salaryBreakdown">
+                            <div class="breakdown-item">
+                                <span>Оклад:</span>
+                                <span id="resultBaseSalary">0 ₽</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Премия (47%):</span>
+                                <span id="resultBonus">0 ₽</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Надбавка за смену:</span>
+                                <span id="resultShiftPay">0 ₽</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Вредность:</span>
+                                <span id="resultHazardPay">0 ₽</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Переработки:</span>
+                                <span id="resultOvertime">0 ₽</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Праздничные дни:</span>
+                                <span id="resultHolidayWork">0 ₽</span>
+                            </div>
+                            <div class="breakdown-total">
+                                <span><strong>ИТОГО:</strong></span>
+                                <span id="resultTotal"><strong>0 ₽</strong></span>
+                            </div>
+                        </div>
+                        
+                        <div class="calculator-actions">
+                            <button class="btn btn-secondary" id="exportCalculation">
+                                <i class="fas fa-download"></i> Экспорт расчета
+                            </button>
+                            <button class="btn btn-secondary" id="printCalculation">
+                                <i class="fas fa-print"></i> Печать
+                            </button>
                         </div>
                     </div>
                 </div>

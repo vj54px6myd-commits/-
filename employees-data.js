@@ -2,6 +2,8 @@
 const EMPLOYEES_DATABASE = [
     {
         id: 1,
+        employeeNumber: "001", // Табельный номер
+        password: "password123", // Пароль для входа
         name: "Аляутдинов Рашид",
         position: "Оператор ДПУ",
         department: "production",

@@ -812,7 +812,7 @@ function showWelcomeScreen() {
         <div class="welcome-content">
             <h1><i class="fas fa-flask"></i> Сода-Хлорат</h1>
             <p>Добро пожаловать в личный кабинет сотрудника</p>
-            <p>Войдите в систему или зарегистрируйтесь для доступа к персональной информации</p>
+            <p>Войдите в систему для доступа к персональной информации</p>
             <div class="welcome-buttons">
                 <button class="welcome-btn primary" id="showLoginBtn">
                     <i class="fas fa-sign-in-alt"></i>
@@ -876,25 +876,10 @@ function updateUserInfo(user) {
 }
 
 function setupAuthEventListeners() {
-    // Auth modal tabs
-    const authTabs = document.querySelectorAll('.auth-tab');
-    authTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const tabName = this.getAttribute('data-tab');
-            switchAuthTab(tabName);
-        });
-    });
-    
     // Login form
     const loginForm = document.getElementById('loginFormElement');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
-    }
-    
-    // Register form
-    const registerForm = document.getElementById('registerFormElement');
-    if (registerForm) {
-        registerForm.addEventListener('submit', handleRegister);
     }
     
     
@@ -936,49 +921,30 @@ function hideAuthModal() {
     }
 }
 
-function switchAuthTab(tabName) {
-    // Update tabs
-    const tabs = document.querySelectorAll('.auth-tab');
-    tabs.forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.getAttribute('data-tab') === tabName) {
-            tab.classList.add('active');
-        }
-    });
-    
-    // Update forms
-    const forms = document.querySelectorAll('.auth-form');
-    forms.forEach(form => {
-        form.classList.remove('active');
-        if (form.id === tabName + 'Form') {
-            form.classList.add('active');
-        }
-    });
-}
 
 function handleLogin(e) {
     e.preventDefault();
     
-    const email = document.getElementById('loginEmail').value;
+    const employeeNumber = document.getElementById('loginEmployeeNumber').value;
     const password = document.getElementById('loginPassword').value;
     
     // Simple validation
-    if (!email || !password) {
+    if (!employeeNumber || !password) {
         showNotification('Пожалуйста, заполните все поля', 'error');
         return;
     }
     
     // Check if user exists in employees database
     const employees = getEmployeesData();
-    const user = employees.find(emp => emp.email === email);
+    const user = employees.find(emp => emp.employeeNumber === employeeNumber);
     
     if (!user) {
-        showNotification('Пользователь с таким email не найден', 'error');
+        showNotification('Сотрудник с таким табельным номером не найден', 'error');
         return;
     }
     
-    // Simple password check (in real app, this would be hashed)
-    if (password !== 'password123') { // Default password for demo
+    // Check password from database
+    if (password !== user.password) {
         showNotification('Неверный пароль', 'error');
         return;
     }
@@ -986,6 +952,7 @@ function handleLogin(e) {
     // Login successful
     const userData = {
         id: user.id,
+        employeeNumber: user.employeeNumber,
         name: user.name,
         email: user.email,
         position: user.position,
@@ -1004,145 +971,6 @@ function handleLogin(e) {
     showMainApp(userData);
 }
 
-function handleRegister(e) {
-    e.preventDefault();
-    
-    console.log('Начало регистрации...');
-    
-    const firstName = document.getElementById('regFirstName').value;
-    const lastName = document.getElementById('regLastName').value;
-    const email = document.getElementById('regEmail').value;
-    const position = document.getElementById('regPosition').value;
-    const department = document.getElementById('regDepartment').value;
-    const shift = document.getElementById('regShift').value;
-    const accessLevel = document.getElementById('regAccessLevel').value;
-    const phone = document.getElementById('regPhone').value;
-    const password = document.getElementById('regPassword').value;
-    const confirmPassword = document.getElementById('regConfirmPassword').value;
-    const agreement = document.getElementById('regAgreement').checked;
-    
-    console.log('Данные формы:', { firstName, lastName, email, position, department, phone, agreement });
-    
-    // Check if all form elements exist
-    const requiredFields = ['regFirstName', 'regLastName', 'regEmail', 'regPosition', 'regDepartment', 'regShift', 'regAccessLevel', 'regPhone', 'regPassword', 'regConfirmPassword'];
-    const missingFields = requiredFields.filter(fieldId => !document.getElementById(fieldId));
-    
-    if (missingFields.length > 0) {
-        console.error('Отсутствуют поля формы:', missingFields);
-        showNotification('Ошибка формы. Обновите страницу и попробуйте снова.', 'error');
-        return;
-    }
-    
-    // Validation
-    if (!firstName || !lastName || !email || !position || !department || !shift || !document.getElementById('regAccessLevel').value || !phone || !password || !confirmPassword) {
-        showNotification('Пожалуйста, заполните все поля', 'error');
-        return;
-    }
-    
-    if (password !== confirmPassword) {
-        showNotification('Пароли не совпадают', 'error');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showNotification('Пароль должен содержать минимум 6 символов', 'error');
-        return;
-    }
-    
-    if (!agreement) {
-        showNotification('Необходимо согласиться с политикой конфиденциальности', 'error');
-        return;
-    }
-    
-    // Email validation - any valid email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showNotification('Введите корректный email адрес', 'error');
-        return;
-    }
-    
-    // Check if user already exists
-    const employees = getEmployeesData();
-    const existingUser = employees.find(emp => emp.email === email);
-    
-    if (existingUser) {
-        showNotification('Пользователь с таким email уже зарегистрирован', 'error');
-        return;
-    }
-    
-    // Create new user with salary structure
-    const shiftData = getShiftData(shift);
-    const accessLevelNames = {
-        'employee': 'Сотрудник',
-        'manager': 'Менеджер',
-        'admin': 'Администратор'
-    };
-    
-    const newUser = {
-        id: employees.length + 1,
-        name: firstName + ' ' + lastName,
-        position: position,
-        department: department,
-        departmentName: getDepartmentName(department),
-        shift: shift,
-        shiftName: shiftData.name,
-        email: email,
-        phone: phone,
-        status: 'working',
-        statusName: 'На работе',
-        schedule: shiftData.time,
-        avatar: firstName.charAt(0) + lastName.charAt(0),
-        hireDate: new Date().toISOString().split('T')[0],
-        accessLevel: accessLevel,
-        accessLevelName: accessLevelNames[accessLevel] || 'Сотрудник',
-        salary: {
-            baseSalary: 50000,
-            bonus: 0,
-            nightShift: 0,
-            hazardPay: 0,
-            overtime: 0,
-            holidayWork: 0,
-            total: 50000
-        },
-        workHours: {
-            regular: 160,
-            night: 0,
-            overtime: 0,
-            holiday: 0
-        }
-    };
-    
-    // In a real app, this would be saved to a database
-    // For demo purposes, we'll save to localStorage
-    try {
-        const newEmployees = [...employees, newUser];
-        localStorage.setItem('employeesDatabase', JSON.stringify(newEmployees));
-        console.log('Сотрудник сохранен в localStorage:', newUser);
-        
-        showNotification('Регистрация успешна! Добро пожаловать в команду!', 'success');
-        hideAuthModal();
-        
-        // Auto-login after registration
-        const userData = {
-            id: newUser.id,
-            name: newUser.name,
-            email: newUser.email,
-            position: newUser.position,
-            department: newUser.department,
-            departmentName: newUser.departmentName,
-            avatar: newUser.avatar,
-            accessLevel: newUser.accessLevel,
-            accessLevelName: newUser.accessLevelName
-        };
-        
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-        console.log('Пользователь авторизован:', userData);
-        showMainApp(userData);
-    } catch (error) {
-        console.error('Ошибка при сохранении сотрудника:', error);
-        showNotification('Ошибка при сохранении данных. Попробуйте еще раз.', 'error');
-    }
-}
 
 function handleLogout() {
     localStorage.removeItem('currentUser');

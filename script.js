@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     navItems.forEach(item => {
         item.addEventListener('click', function() {
             const targetSection = this.getAttribute('data-section');
+            console.log('Navigation clicked:', targetSection);
             
             // Remove active class from all nav items and sections
             navItems.forEach(nav => nav.classList.remove('active'));
@@ -42,7 +43,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add active class to clicked nav item and corresponding section
             this.classList.add('active');
-            document.getElementById(targetSection).classList.add('active');
+            const targetElement = document.getElementById(targetSection);
+            if (targetElement) {
+                targetElement.classList.add('active');
+                console.log('Section activated:', targetSection);
+            } else {
+                console.log('Section not found:', targetSection);
+            }
         });
     });
     
@@ -859,6 +866,7 @@ function showMainApp(user) {
     initializeEmployees();
     updatePersonalSalary();
     initializeCalculator();
+    updateUIForAccessLevel();
     
     // Update UI based on access level
     updateUIForAccessLevel();
@@ -1030,11 +1038,21 @@ function updateUIForAccessLevel() {
     // Показать/скрыть калькулятор для бухгалтеров
     const calculatorNav = document.getElementById('calculatorNav');
     if (calculatorNav) {
-        if (hasAccess('accountant')) {
+        const hasAccountantAccess = hasAccess('accountant');
+        console.log('Calculator access check:', {
+            currentUser: currentUser,
+            accessLevel: currentUser.accessLevel,
+            hasAccountantAccess: hasAccountantAccess
+        });
+        if (hasAccountantAccess) {
             calculatorNav.style.display = 'flex';
+            console.log('Calculator nav shown');
         } else {
             calculatorNav.style.display = 'none';
+            console.log('Calculator nav hidden');
         }
+    } else {
+        console.log('Calculator nav element not found');
     }
     
     // Показать уровень доступа в интерфейсе

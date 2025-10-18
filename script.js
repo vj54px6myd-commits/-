@@ -1070,15 +1070,66 @@ function initializeCalculator() {
         calculatorForm.addEventListener('submit', handleSalaryCalculation);
     }
     
+    // Кнопки экспорта и печати
     const exportBtn = document.getElementById('exportCalculation');
+    const exportExcelBtn = document.getElementById('exportExcel');
     const printBtn = document.getElementById('printCalculation');
+    const clearBtn = document.getElementById('clearForm');
+    const loadTemplateBtn = document.getElementById('loadTemplate');
+    const saveTemplateBtn = document.getElementById('saveTemplate');
     
     if (exportBtn) {
         exportBtn.addEventListener('click', exportCalculation);
     }
     
+    if (exportExcelBtn) {
+        exportExcelBtn.addEventListener('click', exportExcel);
+    }
+    
     if (printBtn) {
         printBtn.addEventListener('click', printCalculation);
+    }
+    
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearCalculatorForm);
+    }
+    
+    if (loadTemplateBtn) {
+        loadTemplateBtn.addEventListener('click', loadTemplate);
+    }
+    
+    if (saveTemplateBtn) {
+        saveTemplateBtn.addEventListener('click', saveTemplate);
+    }
+    
+    // Автоматический расчет общих часов
+    const workDaysInput = document.getElementById('calcWorkDays');
+    const hoursPerDayInput = document.getElementById('calcHoursPerDay');
+    const totalHoursInput = document.getElementById('calcTotalHours');
+    
+    if (workDaysInput && hoursPerDayInput && totalHoursInput) {
+        function updateTotalHours() {
+            const workDays = parseInt(workDaysInput.value) || 0;
+            const hoursPerDay = parseInt(hoursPerDayInput.value) || 0;
+            totalHoursInput.value = workDays * hoursPerDay;
+        }
+        
+        workDaysInput.addEventListener('input', updateTotalHours);
+        hoursPerDayInput.addEventListener('input', updateTotalHours);
+        updateTotalHours(); // Инициализация
+    }
+    
+    // Установка текущего месяца
+    const monthSelect = document.getElementById('calcMonth');
+    if (monthSelect) {
+        const currentMonth = new Date().getMonth() + 1;
+        monthSelect.value = currentMonth;
+    }
+    
+    // Установка текущего года
+    const yearInput = document.getElementById('calcYear');
+    if (yearInput) {
+        yearInput.value = new Date().getFullYear();
     }
 }
 
@@ -1088,12 +1139,26 @@ function handleSalaryCalculation(e) {
     const formData = {
         employeeName: document.getElementById('calcEmployeeName').value,
         position: document.getElementById('calcPosition').value,
+        department: document.getElementById('calcDepartment').value,
+        employeeNumber: document.getElementById('calcEmployeeNumber').value,
         baseSalary: parseFloat(document.getElementById('calcBaseSalary').value) || 0,
         shift: document.getElementById('calcShift').value,
+        workDays: parseInt(document.getElementById('calcWorkDays').value) || 22,
+        hoursPerDay: parseInt(document.getElementById('calcHoursPerDay').value) || 12,
+        totalHours: parseInt(document.getElementById('calcTotalHours').value) || 160,
         hazardPay: parseFloat(document.getElementById('calcHazardPay').value) || 0,
+        qualificationPay: parseFloat(document.getElementById('calcQualificationPay').value) || 0,
         overtime: parseFloat(document.getElementById('calcOvertime').value) || 0,
         holidayWork: parseFloat(document.getElementById('calcHolidayWork').value) || 0,
-        bonusPercent: parseFloat(document.getElementById('calcBonusPercent').value) || 47
+        weekendWork: parseFloat(document.getElementById('calcWeekendWork').value) || 0,
+        nightHours: parseFloat(document.getElementById('calcNightHours').value) || 0,
+        taxDeduction: parseFloat(document.getElementById('calcTaxDeduction').value) || 0,
+        otherDeductions: parseFloat(document.getElementById('calcOtherDeductions').value) || 0,
+        regionCoeff: parseFloat(document.getElementById('calcRegionCoeff').value) || 1.0,
+        month: document.getElementById('calcMonth').options[document.getElementById('calcMonth').selectedIndex].text,
+        year: parseInt(document.getElementById('calcYear').value) || new Date().getFullYear(),
+        bonusPercent: parseFloat(document.getElementById('calcBonusPercent').value) || 47,
+        notes: document.getElementById('calcNotes').value
     };
     
     if (!formData.employeeName || !formData.position || !formData.baseSalary || !formData.shift) {
@@ -1103,11 +1168,14 @@ function handleSalaryCalculation(e) {
     
     const calculation = calculateSalaryForCalculator(formData);
     displayCalculationResults(calculation);
+    
+    showNotification('Расчет выполнен успешно', 'success');
 }
 
 function calculateSalaryForCalculator(data) {
     const baseSalary = data.baseSalary;
-    const baseHourly = baseSalary / 160; // Стоимость часа
+    const totalHours = data.totalHours || 160;
+    const baseHourly = baseSalary / totalHours; // Стоимость часа
     
     // Премия
     const bonus = Math.round(baseSalary * (data.bonusPercent / 100));
@@ -1124,32 +1192,78 @@ function calculateSalaryForCalculator(data) {
     // Праздничные дни
     const holidayPay = Math.round(data.holidayWork * baseHourly * 1.0); // +100% за праздники
     
-    // Вредность
-    const hazardPay = data.hazardPay;
+    // Выходные дни
+    const weekendPay = Math.round(data.weekendWork * baseHourly * 0.5); // +50% за выходные
     
-    const total = baseSalary + bonus + shiftPay + hazardPay + overtimePay + holidayPay;
+    // Ночные часы
+    const nightHoursPay = Math.round(data.nightHours * baseHourly * 0.4); // +40% за ночные часы
+    
+    // Вредность
+    const hazardPay = data.hazardPay || 0;
+    
+    // Квалификация
+    const qualificationPay = data.qualificationPay || 0;
+    
+    // Районный коэффициент
+    const regionCoeff = data.regionCoeff || 1.0;
+    
+    // Удержания
+    const taxDeduction = data.taxDeduction || 0;
+    const otherDeductions = data.otherDeductions || 0;
+    
+    // Итого начислено
+    const grossAmount = baseSalary + bonus + shiftPay + hazardPay + qualificationPay + 
+                       overtimePay + holidayPay + weekendPay + nightHoursPay;
+    
+    // Применяем районный коэффициент
+    const adjustedAmount = Math.round(grossAmount * regionCoeff);
+    
+    // Итого к выплате (с учетом удержаний)
+    const total = adjustedAmount - taxDeduction - otherDeductions;
     
     return {
         employeeName: data.employeeName,
         position: data.position,
+        department: data.department,
+        employeeNumber: data.employeeNumber,
+        period: `${data.month || 'Январь'} ${data.year || new Date().getFullYear()}`,
         baseSalary: baseSalary,
         bonus: bonus,
         shiftPay: shiftPay,
         hazardPay: hazardPay,
+        qualificationPay: qualificationPay,
         overtimePay: overtimePay,
         holidayPay: holidayPay,
-        total: total,
-        shift: data.shift
+        weekendPay: weekendPay,
+        nightHoursPay: nightHoursPay,
+        regionCoeff: regionCoeff,
+        adjustedAmount: adjustedAmount,
+        taxDeduction: taxDeduction,
+        otherDeductions: otherDeductions,
+        total: Math.max(0, total), // Не может быть отрицательным
+        shift: data.shift,
+        notes: data.notes
     };
 }
 
 function displayCalculationResults(calculation) {
+    // Основная информация
+    document.getElementById('resultEmployeeName').textContent = calculation.employeeName;
+    document.getElementById('resultPosition').textContent = calculation.position;
+    document.getElementById('resultPeriod').textContent = calculation.period;
+    
+    // Детализация зарплаты
     document.getElementById('resultBaseSalary').textContent = `${calculation.baseSalary.toLocaleString()} ₽`;
     document.getElementById('resultBonus').textContent = `${calculation.bonus.toLocaleString()} ₽`;
     document.getElementById('resultShiftPay').textContent = `${calculation.shiftPay.toLocaleString()} ₽`;
     document.getElementById('resultHazardPay').textContent = `${calculation.hazardPay.toLocaleString()} ₽`;
+    document.getElementById('resultQualificationPay').textContent = `${calculation.qualificationPay.toLocaleString()} ₽`;
     document.getElementById('resultOvertime').textContent = `${calculation.overtimePay.toLocaleString()} ₽`;
     document.getElementById('resultHolidayWork').textContent = `${calculation.holidayPay.toLocaleString()} ₽`;
+    document.getElementById('resultWeekendWork').textContent = `${calculation.weekendPay.toLocaleString()} ₽`;
+    document.getElementById('resultNightHours').textContent = `${calculation.nightHoursPay.toLocaleString()} ₽`;
+    document.getElementById('resultTaxDeduction').textContent = `${calculation.taxDeduction.toLocaleString()} ₽`;
+    document.getElementById('resultOtherDeductions').textContent = `${calculation.otherDeductions.toLocaleString()} ₽`;
     document.getElementById('resultTotal').textContent = `${calculation.total.toLocaleString()} ₽`;
     
     // Сохраняем расчет для экспорта
@@ -1212,53 +1326,181 @@ function printCalculation() {
                 th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
                 th { background-color: #f2f2f2; }
                 .total { font-weight: bold; background-color: #e6f3ff; }
+                .section { margin-top: 20px; }
             </style>
         </head>
         <body>
             <h1>Расчет заработной платы</h1>
             <p><strong>Сотрудник:</strong> ${calculation.employeeName}</p>
             <p><strong>Должность:</strong> ${calculation.position}</p>
+            <p><strong>Период:</strong> ${calculation.period}</p>
             <p><strong>Дата расчета:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
             
-            <table>
-                <tr>
-                    <th>Компонент</th>
-                    <th>Сумма</th>
-                </tr>
-                <tr>
-                    <td>Оклад</td>
-                    <td>${calculation.baseSalary.toLocaleString()} ₽</td>
-                </tr>
-                <tr>
-                    <td>Премия</td>
-                    <td>${calculation.bonus.toLocaleString()} ₽</td>
-                </tr>
-                <tr>
-                    <td>Надбавка за смену</td>
-                    <td>${calculation.shiftPay.toLocaleString()} ₽</td>
-                </tr>
-                <tr>
-                    <td>Вредность</td>
-                    <td>${calculation.hazardPay.toLocaleString()} ₽</td>
-                </tr>
-                <tr>
-                    <td>Переработки</td>
-                    <td>${calculation.overtimePay.toLocaleString()} ₽</td>
-                </tr>
-                <tr>
-                    <td>Праздничные дни</td>
-                    <td>${calculation.holidayPay.toLocaleString()} ₽</td>
-                </tr>
-                <tr class="total">
-                    <td><strong>ИТОГО</strong></td>
-                    <td><strong>${calculation.total.toLocaleString()} ₽</strong></td>
-                </tr>
-            </table>
+            <div class="section">
+                <h3>Основная часть</h3>
+                <table>
+                    <tr><td>Оклад</td><td>${calculation.baseSalary.toLocaleString()} ₽</td></tr>
+                    <tr><td>Премия</td><td>${calculation.bonus.toLocaleString()} ₽</td></tr>
+                    <tr><td>Надбавка за смену</td><td>${calculation.shiftPay.toLocaleString()} ₽</td></tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h3>Дополнительные выплаты</h3>
+                <table>
+                    <tr><td>Вредность</td><td>${calculation.hazardPay.toLocaleString()} ₽</td></tr>
+                    <tr><td>Квалификация</td><td>${calculation.qualificationPay.toLocaleString()} ₽</td></tr>
+                    <tr><td>Переработки</td><td>${calculation.overtimePay.toLocaleString()} ₽</td></tr>
+                    <tr><td>Праздничные дни</td><td>${calculation.holidayPay.toLocaleString()} ₽</td></tr>
+                    <tr><td>Выходные дни</td><td>${calculation.weekendPay.toLocaleString()} ₽</td></tr>
+                    <tr><td>Ночные часы</td><td>${calculation.nightHoursPay.toLocaleString()} ₽</td></tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h3>Удержания</h3>
+                <table>
+                    <tr><td>Налоговый вычет</td><td>${calculation.taxDeduction.toLocaleString()} ₽</td></tr>
+                    <tr><td>Прочие удержания</td><td>${calculation.otherDeductions.toLocaleString()} ₽</td></tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <table>
+                    <tr class="total">
+                        <td><strong>ИТОГО К ВЫПЛАТЕ</strong></td>
+                        <td><strong>${calculation.total.toLocaleString()} ₽</strong></td>
+                    </tr>
+                </table>
+            </div>
         </body>
         </html>
     `);
     printWindow.document.close();
     printWindow.print();
+}
+
+function clearCalculatorForm() {
+    document.getElementById('salaryCalculatorForm').reset();
+    
+    // Сброс результатов
+    const resultElements = [
+        'resultEmployeeName', 'resultPosition', 'resultPeriod',
+        'resultBaseSalary', 'resultBonus', 'resultShiftPay', 'resultHazardPay',
+        'resultQualificationPay', 'resultOvertime', 'resultHolidayWork',
+        'resultWeekendWork', 'resultNightHours', 'resultTaxDeduction',
+        'resultOtherDeductions', 'resultTotal'
+    ];
+    
+    resultElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = id.includes('Total') ? '0 ₽' : '-';
+        }
+    });
+    
+    // Установка значений по умолчанию
+    document.getElementById('calcBonusPercent').value = '47';
+    document.getElementById('calcRegionCoeff').value = '1.0';
+    document.getElementById('calcWorkDays').value = '22';
+    document.getElementById('calcHoursPerDay').value = '12';
+    document.getElementById('calcYear').value = new Date().getFullYear();
+    
+    showNotification('Форма очищена', 'success');
+}
+
+function loadTemplate() {
+    // Загружаем шаблон для оператора ДПУ
+    document.getElementById('calcEmployeeName').value = 'Иванов Иван Иванович';
+    document.getElementById('calcPosition').value = 'Оператор ДПУ';
+    document.getElementById('calcDepartment').value = 'production';
+    document.getElementById('calcEmployeeNumber').value = '003';
+    document.getElementById('calcBaseSalary').value = '55000';
+    document.getElementById('calcShift').value = 'morning';
+    document.getElementById('calcHazardPay').value = '8000';
+    document.getElementById('calcOvertime').value = '6';
+    document.getElementById('calcHolidayWork').value = '0';
+    document.getElementById('calcWeekendWork').value = '0';
+    document.getElementById('calcNightHours').value = '0';
+    document.getElementById('calcBonusPercent').value = '47';
+    document.getElementById('calcRegionCoeff').value = '1.0';
+    document.getElementById('calcNotes').value = 'Стандартный шаблон для оператора ДПУ';
+    
+    showNotification('Шаблон загружен', 'success');
+}
+
+function saveTemplate() {
+    if (!window.lastCalculation) {
+        showNotification('Сначала выполните расчет зарплаты', 'error');
+        return;
+    }
+    
+    const template = {
+        name: 'Шаблон ' + window.lastCalculation.employeeName,
+        data: {
+            employeeName: document.getElementById('calcEmployeeName').value,
+            position: document.getElementById('calcPosition').value,
+            department: document.getElementById('calcDepartment').value,
+            baseSalary: document.getElementById('calcBaseSalary').value,
+            shift: document.getElementById('calcShift').value,
+            hazardPay: document.getElementById('calcHazardPay').value,
+            bonusPercent: document.getElementById('calcBonusPercent').value
+        },
+        date: new Date().toISOString()
+    };
+    
+    const templates = JSON.parse(localStorage.getItem('salaryTemplates') || '[]');
+    templates.push(template);
+    localStorage.setItem('salaryTemplates', JSON.stringify(templates));
+    
+    showNotification('Шаблон сохранен', 'success');
+}
+
+function exportExcel() {
+    if (!window.lastCalculation) {
+        showNotification('Сначала выполните расчет зарплаты', 'error');
+        return;
+    }
+    
+    const calculation = window.lastCalculation;
+    const data = [
+        ['Расчет заработной платы'],
+        [''],
+        ['Сотрудник:', calculation.employeeName],
+        ['Должность:', calculation.position],
+        ['Период:', calculation.period],
+        ['Дата расчета:', new Date().toLocaleDateString('ru-RU')],
+        [''],
+        ['Детализация зарплаты:'],
+        ['Оклад:', calculation.baseSalary.toLocaleString() + ' ₽'],
+        ['Премия:', calculation.bonus.toLocaleString() + ' ₽'],
+        ['Надбавка за смену:', calculation.shiftPay.toLocaleString() + ' ₽'],
+        ['Вредность:', calculation.hazardPay.toLocaleString() + ' ₽'],
+        ['Квалификация:', calculation.qualificationPay.toLocaleString() + ' ₽'],
+        ['Переработки:', calculation.overtimePay.toLocaleString() + ' ₽'],
+        ['Праздничные дни:', calculation.holidayPay.toLocaleString() + ' ₽'],
+        ['Выходные дни:', calculation.weekendPay.toLocaleString() + ' ₽'],
+        ['Ночные часы:', calculation.nightHoursPay.toLocaleString() + ' ₽'],
+        [''],
+        ['Удержания:'],
+        ['Налоговый вычет:', calculation.taxDeduction.toLocaleString() + ' ₽'],
+        ['Прочие удержания:', calculation.otherDeductions.toLocaleString() + ' ₽'],
+        [''],
+        ['ИТОГО К ВЫПЛАТЕ:', calculation.total.toLocaleString() + ' ₽']
+    ];
+    
+    const csvContent = data.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `расчет_зарплаты_${calculation.employeeName.replace(/\s+/g, '_')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showNotification('Расчет экспортирован в Excel', 'success');
 }
 
 // Функция для автоматического добавления сотрудников

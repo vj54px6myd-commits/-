@@ -22,6 +22,12 @@ function getShiftData(shiftCode) {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize authentication system
     initializeAuth();
+    
+    // Force load employees data from external file
+    if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+        localStorage.setItem('employeesDatabase', JSON.stringify(EMPLOYEES_DATABASE));
+        console.log('Employees data loaded from external file');
+    }
     // Navigation functionality
     const navItems = document.querySelectorAll('.nav-item');
     const contentSections = document.querySelectorAll('.content-section');
@@ -929,6 +935,8 @@ function handleLogin(e) {
     const employeeNumber = document.getElementById('loginEmployeeNumber').value;
     const password = document.getElementById('loginPassword').value;
     
+    console.log('Login attempt:', { employeeNumber, password });
+    
     // Simple validation
     if (!employeeNumber || !password) {
         showNotification('Пожалуйста, заполните все поля', 'error');
@@ -937,7 +945,10 @@ function handleLogin(e) {
     
     // Check if user exists in employees database
     const employees = getEmployeesData();
+    console.log('Available employees:', employees);
+    
     const user = employees.find(emp => emp.employeeNumber === employeeNumber);
+    console.log('Found user:', user);
     
     if (!user) {
         showNotification('Сотрудник с таким табельным номером не найден', 'error');
@@ -946,6 +957,7 @@ function handleLogin(e) {
     
     // Check password from database
     if (password !== user.password) {
+        console.log('Password mismatch. Expected:', user.password, 'Got:', password);
         showNotification('Неверный пароль', 'error');
         return;
     }
@@ -1373,11 +1385,18 @@ function updatePersonalSalary() {
 
 function getEmployeesData() {
     const storedEmployees = localStorage.getItem('employeesDatabase');
+    console.log('Stored employees in localStorage:', storedEmployees);
+    
     if (storedEmployees) {
-        return JSON.parse(storedEmployees);
+        const parsed = JSON.parse(storedEmployees);
+        console.log('Parsed employees from localStorage:', parsed);
+        return parsed;
     } else if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+        console.log('Using EMPLOYEES_DATABASE directly:', EMPLOYEES_DATABASE);
         return EMPLOYEES_DATABASE;
     }
+    
+    console.log('No employees data found, returning empty array');
     return [];
 }
 

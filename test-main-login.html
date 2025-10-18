@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест основной системы - Сода-Хлорат</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-industry"></i>
+                    <div class="company-name">
+                        <h1>Сода-Хлорат</h1>
+                        <p class="holding-name">Росхим</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-content">
+                    <h1>Добро пожаловать в портал Сода-Хлорат</h1>
+                    <p>Войдите в систему для доступа к личному кабинету</p>
+                    <div class="welcome-buttons">
+                        <button class="welcome-btn primary" onclick="showAuthModal()">Войти в систему</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="app-content" id="appContent" style="display: none;">
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li class="nav-item active" data-section="schedule">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Расписание</span>
+                        </li>
+                        <li class="nav-item" data-section="salary">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Зарплата</span>
+                        </li>
+                        <li class="nav-item" data-section="calculator" id="calculatorNav" style="display: none;">
+                            <i class="fas fa-calculator"></i>
+                            <span>Калькулятор ЗП</span>
+                        </li>
+                        <li class="nav-item" data-section="news">
+                            <i class="fas fa-newspaper"></i>
+                            <span>Новости</span>
+                        </li>
+                        <li class="nav-item" data-section="employees">
+                            <i class="fas fa-users"></i>
+                            <span>Сотрудники</span>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="main-content">
+                    <section id="schedule" class="content-section active">
+                        <div class="section-header">
+                            <h2>Расписание работы</h2>
+                        </div>
+                        <p>Добро пожаловать в систему!</p>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Вход в систему</button>
+                </div>
+                
+                <div id="loginForm" class="auth-form active">
+                    <h3>Вход в систему</h3>
+                    <form id="loginFormElement">
+                        <div class="form-group">
+                            <label for="loginEmployeeNumber">Табельный номер:</label>
+                            <input type="text" id="loginEmployeeNumber" required placeholder="Введите табельный номер">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Пароль:</label>
+                            <input type="password" id="loginPassword" required placeholder="Введите пароль">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Войти в систему</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification" style="display: none;"></div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="employees-data.js"></script>
+    <script src="script.js"></script>
+    
+    <script>
+        // Добавляем отладочную информацию
+        console.log('Page loaded');
+        console.log('EMPLOYEES_DATABASE available:', typeof EMPLOYEES_DATABASE !== 'undefined');
+        if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+            console.log('EMPLOYEES_DATABASE:', EMPLOYEES_DATABASE);
+        }
+        
+        // Проверяем localStorage
+        const stored = localStorage.getItem('employeesDatabase');
+        console.log('Stored in localStorage:', stored);
+        
+        // Принудительно загружаем данные
+        if (typeof EMPLOYEES_DATABASE !== 'undefined') {
+            localStorage.setItem('employeesDatabase', JSON.stringify(EMPLOYEES_DATABASE));
+            console.log('Data loaded into localStorage');
+        }
+    </script>
+</body>
+</html>

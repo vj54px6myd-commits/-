@@ -1146,8 +1146,9 @@ function handleSalaryCalculation(e) {
         workDays: parseInt(document.getElementById('calcWorkDays').value) || 22,
         hoursPerDay: parseInt(document.getElementById('calcHoursPerDay').value) || 12,
         totalHours: parseInt(document.getElementById('calcTotalHours').value) || 160,
-        hazardPay: parseFloat(document.getElementById('calcHazardPay').value) || 0,
+        hazardPayPercent: parseFloat(document.getElementById('calcHazardPay').value) || 0,
         qualificationPay: parseFloat(document.getElementById('calcQualificationPay').value) || 0,
+        nightPayPercent: parseFloat(document.getElementById('calcNightPayPercent').value) || 40,
         overtime: parseFloat(document.getElementById('calcOvertime').value) || 0,
         holidayWork: parseFloat(document.getElementById('calcHolidayWork').value) || 0,
         weekendWork: parseFloat(document.getElementById('calcWeekendWork').value) || 0,
@@ -1198,11 +1199,14 @@ function calculateSalaryForCalculator(data) {
     // Ночные часы
     const nightHoursPay = Math.round(data.nightHours * baseHourly * 0.4); // +40% за ночные часы
     
-    // Вредность
-    const hazardPay = data.hazardPay || 0;
+    // Вредность (в процентах от оклада)
+    const hazardPay = Math.round(baseSalary * (data.hazardPayPercent / 100));
     
     // Квалификация
     const qualificationPay = data.qualificationPay || 0;
+    
+    // Надбавка за ночное время (в процентах от оклада)
+    const nightPay = Math.round(baseSalary * (data.nightPayPercent / 100));
     
     // Районный коэффициент
     const regionCoeff = data.regionCoeff || 1.0;
@@ -1212,7 +1216,7 @@ function calculateSalaryForCalculator(data) {
     const otherDeductions = data.otherDeductions || 0;
     
     // Итого начислено
-    const grossAmount = baseSalary + bonus + shiftPay + hazardPay + qualificationPay + 
+    const grossAmount = baseSalary + bonus + shiftPay + hazardPay + qualificationPay + nightPay +
                        overtimePay + holidayPay + weekendPay + nightHoursPay;
     
     // Применяем районный коэффициент
@@ -1232,6 +1236,7 @@ function calculateSalaryForCalculator(data) {
         shiftPay: shiftPay,
         hazardPay: hazardPay,
         qualificationPay: qualificationPay,
+        nightPay: nightPay,
         overtimePay: overtimePay,
         holidayPay: holidayPay,
         weekendPay: weekendPay,
@@ -1258,6 +1263,7 @@ function displayCalculationResults(calculation) {
     document.getElementById('resultShiftPay').textContent = `${calculation.shiftPay.toLocaleString()} ₽`;
     document.getElementById('resultHazardPay').textContent = `${calculation.hazardPay.toLocaleString()} ₽`;
     document.getElementById('resultQualificationPay').textContent = `${calculation.qualificationPay.toLocaleString()} ₽`;
+    document.getElementById('resultNightPay').textContent = `${calculation.nightPay.toLocaleString()} ₽`;
     document.getElementById('resultOvertime').textContent = `${calculation.overtimePay.toLocaleString()} ₽`;
     document.getElementById('resultHolidayWork').textContent = `${calculation.holidayPay.toLocaleString()} ₽`;
     document.getElementById('resultWeekendWork').textContent = `${calculation.weekendPay.toLocaleString()} ₽`;
@@ -1387,7 +1393,7 @@ function clearCalculatorForm() {
     const resultElements = [
         'resultEmployeeName', 'resultPosition', 'resultPeriod',
         'resultBaseSalary', 'resultBonus', 'resultShiftPay', 'resultHazardPay',
-        'resultQualificationPay', 'resultOvertime', 'resultHolidayWork',
+        'resultQualificationPay', 'resultNightPay', 'resultOvertime', 'resultHolidayWork',
         'resultWeekendWork', 'resultNightHours', 'resultTaxDeduction',
         'resultOtherDeductions', 'resultTotal'
     ];

@@ -121,12 +121,21 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="calcHazardPay">Надбавка за вредность (руб):</label>
-                                        <input type="number" id="calcHazardPay" placeholder="0" min="0" value="0">
+                                        <label for="calcHazardPay">Надбавка за вредность (%):</label>
+                                        <input type="number" id="calcHazardPay" placeholder="0" min="0" max="100" value="0">
                                     </div>
                                     <div class="form-group">
                                         <label for="calcQualificationPay">Надбавка за квалификацию (руб):</label>
                                         <input type="number" id="calcQualificationPay" placeholder="0" min="0" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcNightPayPercent">Надбавка за ночное время (%):</label>
+                                        <input type="number" id="calcNightPayPercent" placeholder="40" min="0" max="100" value="40">
+                                    </div>
+                                    <div class="form-group">
+                                        <!-- Пустое поле для выравнивания -->
                                     </div>
                                 </div>
                             </div>
@@ -297,6 +306,10 @@
                                 <div class="breakdown-item">
                                     <span>Квалификация:</span>
                                     <span id="resultQualificationPay">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Ночное время:</span>
+                                    <span id="resultNightPay">0 ₽</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Переработки:</span>

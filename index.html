@@ -531,23 +531,50 @@
                         
                         <div class="salary-breakdown" id="salaryBreakdown">
                             <h4>Детализация зарплаты</h4>
+                            
+                            <!-- Детальные расчеты для бухгалтеров -->
+                            <div class="calculation-details" id="calculationDetails" style="display: none;">
+                                <h5><i class="fas fa-calculator"></i> Детальные расчеты</h5>
+                                <div class="calculation-steps">
+                                    <div class="step-item">
+                                        <span class="step-label">Базовая ставка:</span>
+                                        <span class="step-value" id="detailBaseRate">-</span>
+                                        <span class="step-formula" id="detailBaseRateFormula">-</span>
+                                    </div>
+                                    <div class="step-item">
+                                        <span class="step-label">Общие часы:</span>
+                                        <span class="step-value" id="detailTotalHours">-</span>
+                                        <span class="step-formula">Рабочие дни × Часы в день</span>
+                                    </div>
+                                    <div class="step-item">
+                                        <span class="step-label">Стоимость часа:</span>
+                                        <span class="step-value" id="detailHourlyRate">-</span>
+                                        <span class="step-formula" id="detailHourlyRateFormula">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="breakdown-section">
                                 <h5>Основная часть</h5>
                                 <div class="breakdown-item" id="baseSalaryRow">
                                     <span id="baseSalaryLabel">Оклад:</span>
                                     <span id="resultBaseSalary">0 ₽</span>
+                                    <span class="calculation-hint" id="baseSalaryHint">-</span>
                                 </div>
                                 <div class="breakdown-item" id="hourlyRateRow" style="display: none;">
                                     <span>Почасовая ставка:</span>
                                     <span id="resultHourlyRate">0 ₽/час</span>
+                                    <span class="calculation-hint">Введено вручную</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Премия:</span>
                                     <span id="resultBonus">0 ₽</span>
+                                    <span class="calculation-hint" id="bonusHint">-</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Надбавка за смену:</span>
                                     <span id="resultShiftPay">0 ₽</span>
+                                    <span class="calculation-hint" id="shiftPayHint">-</span>
                                 </div>
                             </div>
                             
@@ -556,30 +583,37 @@
                                 <div class="breakdown-item">
                                     <span>Вредность:</span>
                                     <span id="resultHazardPay">0 ₽</span>
+                                    <span class="calculation-hint" id="hazardPayHint">-</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Квалификация:</span>
                                     <span id="resultQualificationPay">0 ₽</span>
+                                    <span class="calculation-hint">Введено вручную</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Ночное время:</span>
                                     <span id="resultNightPay">0 ₽</span>
+                                    <span class="calculation-hint" id="nightPayHint">-</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Переработки:</span>
                                     <span id="resultOvertime">0 ₽</span>
+                                    <span class="calculation-hint" id="overtimeHint">-</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Праздничные дни:</span>
                                     <span id="resultHolidayWork">0 ₽</span>
+                                    <span class="calculation-hint" id="holidayWorkHint">-</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Выходные дни:</span>
                                     <span id="resultWeekendWork">0 ₽</span>
+                                    <span class="calculation-hint" id="weekendWorkHint">-</span>
                                 </div>
                                 <div class="breakdown-item">
                                     <span>Ночные часы:</span>
                                     <span id="resultNightHours">0 ₽</span>
+                                    <span class="calculation-hint" id="nightHoursHint">-</span>
                                 </div>
                             </div>
                             
@@ -606,6 +640,9 @@
                         </div>
                         
                         <div class="calculator-actions">
+                            <button class="btn btn-primary" id="toggleDetails">
+                                <i class="fas fa-eye"></i> Показать расчеты
+                            </button>
                             <button class="btn btn-success" id="exportCalculation">
                                 <i class="fas fa-download"></i> Экспорт CSV
                             </button>

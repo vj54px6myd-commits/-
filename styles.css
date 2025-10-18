@@ -1362,6 +1362,79 @@ body {
     margin-top: 1.5rem;
 }
 
+/* Детальные расчеты */
+.calculation-details {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.calculation-details h5 {
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.calculation-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.step-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 4px;
+    border-left: 3px solid #3b82f6;
+}
+
+.step-label {
+    font-weight: 500;
+    color: #374151;
+    min-width: 120px;
+}
+
+.step-value {
+    font-weight: 600;
+    color: #1e40af;
+    min-width: 100px;
+    text-align: right;
+}
+
+.step-formula {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-style: italic;
+    min-width: 200px;
+    text-align: right;
+}
+
+.calculation-hint {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.breakdown-item:last-child {
+    border-bottom: none;
+}
+
 .calculator-form {
     background: white;
     padding: 1.5rem;

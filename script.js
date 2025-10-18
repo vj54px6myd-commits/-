@@ -1120,6 +1120,12 @@ function initializeCalculator() {
         saveTemplateBtn.addEventListener('click', saveTemplate);
     }
     
+    // Кнопка показа детальных расчетов
+    const toggleDetailsBtn = document.getElementById('toggleDetails');
+    if (toggleDetailsBtn) {
+        toggleDetailsBtn.addEventListener('click', toggleCalculationDetails);
+    }
+    
     // Автоматический расчет общих часов
     const workDaysInput = document.getElementById('calcWorkDays');
     const hoursPerDayInput = document.getElementById('calcHoursPerDay');
@@ -1316,24 +1322,45 @@ function displayCalculationResults(calculation) {
         document.getElementById('hourlyRateRow').style.display = 'flex';
         document.getElementById('resultHourlyRate').textContent = `${calculation.hourlyRate.toLocaleString()} ₽/час`;
         document.getElementById('resultBaseSalary').textContent = `${calculation.baseSalary.toLocaleString()} ₽`;
+        document.getElementById('baseSalaryHint').textContent = `${calculation.hourlyRate.toLocaleString()} ₽/час × ${calculation.totalHours} часов`;
     } else {
         document.getElementById('baseSalaryRow').style.display = 'flex';
         document.getElementById('hourlyRateRow').style.display = 'none';
         document.getElementById('resultBaseSalary').textContent = `${calculation.baseSalary.toLocaleString()} ₽`;
+        document.getElementById('baseSalaryHint').textContent = 'Введено вручную';
     }
     document.getElementById('resultBonus').textContent = `${calculation.bonus.toLocaleString()} ₽`;
+    document.getElementById('bonusHint').textContent = `${calculation.baseSalary.toLocaleString()} ₽ × ${calculation.bonusPercent || 0}%`;
     document.getElementById('resultShiftPay').textContent = `${calculation.shiftPay.toLocaleString()} ₽`;
+    document.getElementById('shiftPayHint').textContent = calculation.shift === 'night' ? 'Оклад × 40%' : 'Нет надбавки';
+    
     document.getElementById('resultHazardPay').textContent = `${calculation.hazardPay.toLocaleString()} ₽`;
+    document.getElementById('hazardPayHint').textContent = `${calculation.baseSalary.toLocaleString()} ₽ × ${calculation.hazardPayPercent || 0}%`;
+    
     document.getElementById('resultQualificationPay').textContent = `${calculation.qualificationPay.toLocaleString()} ₽`;
+    
     document.getElementById('resultNightPay').textContent = `${calculation.nightPay.toLocaleString()} ₽`;
+    document.getElementById('nightPayHint').textContent = `${calculation.baseSalary.toLocaleString()} ₽ × ${calculation.nightPayPercent || 0}%`;
+    
     document.getElementById('resultOvertime').textContent = `${calculation.overtimePay.toLocaleString()} ₽`;
+    document.getElementById('overtimeHint').textContent = `${calculation.overtime || 0} часов × ${calculation.baseHourly?.toFixed(2) || 0} ₽/час × 2.0 (двойной размер)`;
+    
     document.getElementById('resultHolidayWork').textContent = `${calculation.holidayPay.toLocaleString()} ₽`;
+    document.getElementById('holidayWorkHint').textContent = `${calculation.holidayWork || 0} часов × ${calculation.baseHourly?.toFixed(2) || 0} ₽/час × 2.0 (+100%)`;
+    
     document.getElementById('resultWeekendWork').textContent = `${calculation.weekendPay.toLocaleString()} ₽`;
+    document.getElementById('weekendWorkHint').textContent = `${calculation.weekendWork || 0} часов × ${calculation.baseHourly?.toFixed(2) || 0} ₽/час × 1.5 (+50%)`;
+    
     document.getElementById('resultNightHours').textContent = `${calculation.nightHoursPay.toLocaleString()} ₽`;
+    document.getElementById('nightHoursHint').textContent = `${calculation.nightHours || 0} часов × ${calculation.baseHourly?.toFixed(2) || 0} ₽/час × 1.4 (+40%)`;
+    
     document.getElementById('resultNdfl').textContent = `${calculation.ndfl.toLocaleString()} ₽`;
     document.getElementById('resultTaxDeduction').textContent = `${calculation.taxDeduction.toLocaleString()} ₽`;
     document.getElementById('resultOtherDeductions').textContent = `${calculation.otherDeductions.toLocaleString()} ₽`;
     document.getElementById('resultTotal').textContent = `${calculation.total.toLocaleString()} ₽`;
+    
+    // Детальные расчеты
+    updateCalculationDetails(calculation);
     
     // Сохраняем расчет для экспорта
     window.lastCalculation = calculation;
@@ -1576,6 +1603,38 @@ function exportExcel() {
     document.body.removeChild(link);
     
     showNotification('Расчет экспортирован в Excel', 'success');
+}
+
+// Функция обновления детальных расчетов
+function updateCalculationDetails(calculation) {
+    const baseRate = calculation.salaryType === 'hourly' ? 
+        calculation.hourlyRate : 
+        (calculation.baseSalary / (calculation.totalHours || 160));
+    
+    document.getElementById('detailBaseRate').textContent = `${baseRate.toFixed(2)} ₽/час`;
+    document.getElementById('detailBaseRateFormula').textContent = calculation.salaryType === 'hourly' ? 
+        'Введено вручную' : 
+        `${calculation.baseSalary.toLocaleString()} ₽ ÷ ${calculation.totalHours || 160} часов`;
+    
+    document.getElementById('detailTotalHours').textContent = `${calculation.totalHours || 160} часов`;
+    document.getElementById('detailHourlyRate').textContent = `${baseRate.toFixed(2)} ₽/час`;
+    document.getElementById('detailHourlyRateFormula').textContent = calculation.salaryType === 'hourly' ? 
+        'Введено вручную' : 
+        `${calculation.baseSalary.toLocaleString()} ₽ ÷ ${calculation.totalHours || 160} часов`;
+}
+
+// Функция переключения детальных расчетов
+function toggleCalculationDetails() {
+    const detailsSection = document.getElementById('calculationDetails');
+    const toggleBtn = document.getElementById('toggleDetails');
+    
+    if (detailsSection.style.display === 'none') {
+        detailsSection.style.display = 'block';
+        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Скрыть расчеты';
+    } else {
+        detailsSection.style.display = 'none';
+        toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Показать расчеты';
+    }
 }
 
 // Функция переключения между типами расчета зарплаты

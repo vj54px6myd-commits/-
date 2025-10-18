@@ -279,107 +279,284 @@
             <section id="calculator" class="content-section" style="display: none;">
                 <div class="section-header">
                     <h2><i class="fas fa-calculator"></i> Калькулятор заработной платы</h2>
-                    <p>Расчет зарплаты для сотрудников</p>
+                    <p>Расширенный расчет зарплаты для сотрудников</p>
                 </div>
                 
                 <div class="calculator-container">
                     <div class="calculator-form">
-                        <h3>Параметры расчета</h3>
+                        <h3><i class="fas fa-edit"></i> Параметры расчета</h3>
                         <form id="salaryCalculatorForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="calcEmployeeName">ФИО сотрудника:</label>
-                                    <input type="text" id="calcEmployeeName" placeholder="Введите ФИО сотрудника" required>
+                            <!-- Основная информация -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-user"></i> Основная информация</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcEmployeeName">ФИО сотрудника:</label>
+                                        <input type="text" id="calcEmployeeName" placeholder="Введите ФИО сотрудника" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcPosition">Должность:</label>
+                                        <input type="text" id="calcPosition" placeholder="Введите должность" required>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="calcPosition">Должность:</label>
-                                    <input type="text" id="calcPosition" placeholder="Введите должность" required>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcDepartment">Отдел:</label>
+                                        <select id="calcDepartment">
+                                            <option value="production">Производство</option>
+                                            <option value="accounting">Бухгалтерия</option>
+                                            <option value="hr">Отдел кадров</option>
+                                            <option value="management">Руководство</option>
+                                            <option value="maintenance">Обслуживание</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcEmployeeNumber">Табельный номер:</label>
+                                        <input type="text" id="calcEmployeeNumber" placeholder="001" maxlength="10">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Зарплатная информация -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-money-bill-wave"></i> Зарплатная информация</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcBaseSalary">Оклад (руб/месяц):</label>
+                                        <input type="number" id="calcBaseSalary" placeholder="50000" min="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcBonusPercent">Премия (%):</label>
+                                        <input type="number" id="calcBonusPercent" placeholder="47" min="0" max="100" value="47">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcHazardPay">Надбавка за вредность (руб):</label>
+                                        <input type="number" id="calcHazardPay" placeholder="0" min="0" value="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcQualificationPay">Надбавка за квалификацию (руб):</label>
+                                        <input type="number" id="calcQualificationPay" placeholder="0" min="0" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- График работы -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-clock"></i> График работы</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcShift">Смена:</label>
+                                        <select id="calcShift" required>
+                                            <option value="">Выберите смену</option>
+                                            <option value="morning">Утренняя (7:30-19:30)</option>
+                                            <option value="day">Дневная (8:00-17:00)</option>
+                                            <option value="night">Ночная (19:30-7:30)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcWorkDays">Рабочих дней в месяце:</label>
+                                        <input type="number" id="calcWorkDays" placeholder="22" min="1" max="31" value="22">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcHoursPerDay">Часов в день:</label>
+                                        <input type="number" id="calcHoursPerDay" placeholder="12" min="1" max="24" value="12">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcTotalHours">Общее количество часов:</label>
+                                        <input type="number" id="calcTotalHours" placeholder="160" min="1" max="744" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Дополнительные часы -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-plus-circle"></i> Дополнительные часы</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcOvertime">Переработки (часы):</label>
+                                        <input type="number" id="calcOvertime" placeholder="0" min="0" value="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcHolidayWork">Праздничные дни (часы):</label>
+                                        <input type="number" id="calcHolidayWork" placeholder="0" min="0" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcWeekendWork">Выходные дни (часы):</label>
+                                        <input type="number" id="calcWeekendWork" placeholder="0" min="0" value="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcNightHours">Ночные часы (19:00-07:00):</label>
+                                        <input type="number" id="calcNightHours" placeholder="0" min="0" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Удержания -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-minus-circle"></i> Удержания</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcTaxDeduction">Налоговый вычет (руб):</label>
+                                        <input type="number" id="calcTaxDeduction" placeholder="0" min="0" value="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcOtherDeductions">Прочие удержания (руб):</label>
+                                        <input type="number" id="calcOtherDeductions" placeholder="0" min="0" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Дополнительные настройки -->
+                            <div class="form-section">
+                                <h4><i class="fas fa-cog"></i> Дополнительные настройки</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcRegionCoeff">Районный коэффициент:</label>
+                                        <input type="number" id="calcRegionCoeff" placeholder="1.0" min="1.0" max="2.0" step="0.1" value="1.0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcMonth">Месяц расчета:</label>
+                                        <select id="calcMonth">
+                                            <option value="1">Январь</option>
+                                            <option value="2">Февраль</option>
+                                            <option value="3">Март</option>
+                                            <option value="4">Апрель</option>
+                                            <option value="5">Май</option>
+                                            <option value="6">Июнь</option>
+                                            <option value="7">Июль</option>
+                                            <option value="8">Август</option>
+                                            <option value="9">Сентябрь</option>
+                                            <option value="10">Октябрь</option>
+                                            <option value="11">Ноябрь</option>
+                                            <option value="12">Декабрь</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="calcYear">Год расчета:</label>
+                                        <input type="number" id="calcYear" placeholder="2024" min="2020" max="2030" value="2024">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calcNotes">Примечания:</label>
+                                        <input type="text" id="calcNotes" placeholder="Дополнительная информация">
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="calcBaseSalary">Оклад (руб/месяц):</label>
-                                    <input type="number" id="calcBaseSalary" placeholder="50000" min="0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="calcShift">Смена:</label>
-                                    <select id="calcShift" required>
-                                        <option value="">Выберите смену</option>
-                                        <option value="morning">Утренняя (7:30-19:30)</option>
-                                        <option value="day">Дневная (8:00-17:00)</option>
-                                        <option value="night">Ночная (19:30-7:30)</option>
-                                    </select>
-                                </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-large">
+                                    <i class="fas fa-calculator"></i> Рассчитать зарплату
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="clearForm">
+                                    <i class="fas fa-eraser"></i> Очистить форму
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="loadTemplate">
+                                    <i class="fas fa-file-import"></i> Загрузить шаблон
+                                </button>
                             </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="calcHazardPay">Надбавка за вредность (руб):</label>
-                                    <input type="number" id="calcHazardPay" placeholder="0" min="0" value="0">
-                                </div>
-                                <div class="form-group">
-                                    <label for="calcOvertime">Переработки (часы):</label>
-                                    <input type="number" id="calcOvertime" placeholder="0" min="0" value="0">
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="calcHolidayWork">Праздничные дни (часы):</label>
-                                    <input type="number" id="calcHolidayWork" placeholder="0" min="0" value="0">
-                                </div>
-                                <div class="form-group">
-                                    <label for="calcBonusPercent">Премия (%):</label>
-                                    <input type="number" id="calcBonusPercent" placeholder="47" min="0" max="100" value="47">
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-calculator"></i> Рассчитать зарплату
-                            </button>
                         </form>
                     </div>
                     
                     <div class="calculator-results">
-                        <h3>Результат расчета</h3>
+                        <h3><i class="fas fa-chart-line"></i> Результат расчета</h3>
+                        <div class="calculation-summary">
+                            <div class="summary-item">
+                                <span>Сотрудник:</span>
+                                <span id="resultEmployeeName">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Должность:</span>
+                                <span id="resultPosition">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Период:</span>
+                                <span id="resultPeriod">-</span>
+                            </div>
+                        </div>
+                        
                         <div class="salary-breakdown" id="salaryBreakdown">
-                            <div class="breakdown-item">
-                                <span>Оклад:</span>
-                                <span id="resultBaseSalary">0 ₽</span>
+                            <h4>Детализация зарплаты</h4>
+                            <div class="breakdown-section">
+                                <h5>Основная часть</h5>
+                                <div class="breakdown-item">
+                                    <span>Оклад:</span>
+                                    <span id="resultBaseSalary">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Премия:</span>
+                                    <span id="resultBonus">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Надбавка за смену:</span>
+                                    <span id="resultShiftPay">0 ₽</span>
+                                </div>
                             </div>
-                            <div class="breakdown-item">
-                                <span>Премия (47%):</span>
-                                <span id="resultBonus">0 ₽</span>
+                            
+                            <div class="breakdown-section">
+                                <h5>Дополнительные выплаты</h5>
+                                <div class="breakdown-item">
+                                    <span>Вредность:</span>
+                                    <span id="resultHazardPay">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Квалификация:</span>
+                                    <span id="resultQualificationPay">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Переработки:</span>
+                                    <span id="resultOvertime">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Праздничные дни:</span>
+                                    <span id="resultHolidayWork">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Выходные дни:</span>
+                                    <span id="resultWeekendWork">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Ночные часы:</span>
+                                    <span id="resultNightHours">0 ₽</span>
+                                </div>
                             </div>
-                            <div class="breakdown-item">
-                                <span>Надбавка за смену:</span>
-                                <span id="resultShiftPay">0 ₽</span>
+                            
+                            <div class="breakdown-section">
+                                <h5>Удержания</h5>
+                                <div class="breakdown-item">
+                                    <span>Налоговый вычет:</span>
+                                    <span id="resultTaxDeduction">0 ₽</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Прочие удержания:</span>
+                                    <span id="resultOtherDeductions">0 ₽</span>
+                                </div>
                             </div>
-                            <div class="breakdown-item">
-                                <span>Вредность:</span>
-                                <span id="resultHazardPay">0 ₽</span>
-                            </div>
-                            <div class="breakdown-item">
-                                <span>Переработки:</span>
-                                <span id="resultOvertime">0 ₽</span>
-                            </div>
-                            <div class="breakdown-item">
-                                <span>Праздничные дни:</span>
-                                <span id="resultHolidayWork">0 ₽</span>
-                            </div>
+                            
                             <div class="breakdown-total">
-                                <span><strong>ИТОГО:</strong></span>
+                                <span><strong>ИТОГО К ВЫПЛАТЕ:</strong></span>
                                 <span id="resultTotal"><strong>0 ₽</strong></span>
                             </div>
                         </div>
                         
                         <div class="calculator-actions">
-                            <button class="btn btn-secondary" id="exportCalculation">
-                                <i class="fas fa-download"></i> Экспорт расчета
+                            <button class="btn btn-success" id="exportCalculation">
+                                <i class="fas fa-download"></i> Экспорт CSV
                             </button>
-                            <button class="btn btn-secondary" id="printCalculation">
+                            <button class="btn btn-info" id="exportExcel">
+                                <i class="fas fa-file-excel"></i> Экспорт Excel
+                            </button>
+                            <button class="btn btn-warning" id="printCalculation">
                                 <i class="fas fa-print"></i> Печать
+                            </button>
+                            <button class="btn btn-secondary" id="saveTemplate">
+                                <i class="fas fa-save"></i> Сохранить шаблон
                             </button>
                         </div>
                     </div>
